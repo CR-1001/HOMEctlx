@@ -1,0 +1,37 @@
+{# This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+
+{% extends "base.html" %}
+
+{% block external %}
+    <script src="{{ url_for('static', filename='lightctl.js') }}"></script>
+{% endblock %}
+
+
+{% block title %}LIGHTS{% endblock %}
+{% block accent %}1{% endblock %}
+
+
+{% block header %}
+
+{% endblock %}
+
+
+{% block content %}
+    <div id="states" data-type="{{type}}" class="width-1">
+        <p class="container-1 header">Connecting to bridge.</p>
+    </div>
+{% endblock %}
+
+
+{% block footer %}
+    <br><br>
+    <a href="/lights/ctl-{{type}}">[refresh]</a>
+    <br><br>
+    <a href="/lights/ctl-{{other_type}}">[{{type}}/{{other_type}}]</a>
+    <br><br>
+    <a href="/lights/set_alarm/{{type}}">[alarm]</a>
+    <br><br>
+    <a href="/lights/set_all_off/{{type}}">[all off]</a>
+    <br><br>
+{% endblock %}

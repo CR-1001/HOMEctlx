@@ -1,0 +1,258 @@
+/* This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+   Distributed under terms of the GPL3 license. */
+   
+html {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(30, 30, 30);
+    color: rgb(210, 210, 210);
+    padding: 2em;
+    text-shadow: 0.1em 0.1em 0.1em black;
+    line-break: anywhere;
+    user-select: none;
+}
+
+.page-header {
+    position: sticky; 
+    background-color: rgb(30, 30, 30);
+    top: 0; 
+    left: 0;
+    margin-bottom: 1em;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.indent-1 {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.indent-2 {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.indent-3 {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.indent-4 {
+    margin-left: 4em;
+    margin-right: 4em;
+}
+
+.width-0 {
+    width: 80em;
+}
+
+.width-1 {
+    width: 27em;
+}
+
+.width-3 {
+    width: 60em;
+}
+
+.width-5 {
+    width: 4em;
+}
+
+.table-1 {
+    text-align: start;
+    min-height: 2em;
+}
+
+.table-1 td {
+    width: 4em;
+    vertical-align: top;
+    min-height: 2em;
+}
+
+.container-1 {
+    box-shadow: 0.5em 0.5em 0.2em 0.2em rgba(20, 20, 20, 0.5);
+    border-radius: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-top: 0.8em;
+}
+
+.img-1 {
+    max-width: 10em;
+    max-height: 10em;
+}
+
+.img-2 {
+    max-width: 30em;
+    max-height: 30em;
+}
+
+.img-3 {
+    max-width: 70em;
+    max-height: 70em;
+}
+
+.img-4 {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.color-2 {
+    width: 8em;
+    height: 6em;
+}
+
+.back-1 {
+    border-radius: 0.5em;
+    background-color: rgb(40, 40, 40);
+}
+
+.back-2 {
+    border-radius: 0.5em;
+    background-color: rgb(50, 50, 50);
+}
+
+.back-3 {
+    border-radius: 0.5em;
+    background-color: rgb(60, 60, 60);
+}
+
+.bottom-sticky {
+    position: sticky;
+    padding: 1em;
+    bottom: 3em;
+}
+
+.header {
+    margin-top: 0.6em;
+    text-decoration: none;
+}
+
+.section-0 {
+    text-shadow: 
+    0.1em 0.1em 0.1em black,
+    0.1em -0.1em 0em rgb(120, 200, 200),
+    -0.1em 0.1em 0em rgb(200, 120, 200);
+    font-weight: bold;
+    font-size: 2em;
+}
+
+.section-0b {
+    font-weight: bold;
+    font-size: 1em;
+    margin-left: -0.5em;
+    vertical-align: bottom;
+    font-style: oblique;
+    letter-spacing: -0.1em;
+}
+
+.section-1 {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: rgb(250, 250, 250);
+}
+
+.section-2 {
+    font-size: 1.1em;
+    color: rgb(240, 240, 240);
+}
+
+.section-3 {
+    font-size: 1.0em;
+    color: rgb(230, 230, 230);
+}
+
+input,a,a:visited,.action {
+    text-decoration: none;
+    color: rgb(230, 230, 230);
+    margin-bottom: 0.4em;
+    cursor: pointer;
+}
+
+.info {
+    color: rgb(200, 200, 200);
+}
+
+.inactive {
+    color: rgba(180, 180, 180, 0.3);
+}
+
+.clear {
+    text-shadow: none;
+    letter-spacing: 0.1em;
+    line-height: 1.5em;
+}
+
+.xaccent-1 {
+    color: rgb(255, 230, 160);
+}
+
+.xaccent-2 {
+    color: rgb(200, 255, 130);
+}
+
+.xaccent-3 {
+    color: rgb(220, 205, 255);
+}
+
+.xaccent-4 {
+    color: rgb(255, 150, 200);
+}
+
+.xaccent-5 {
+    color: rgb(152, 255, 238);
+}
+
+.rotate {
+    transform: rotate(90deg);
+    transform-origin: left;
+}
+
+.fill, .slider, .slider input {
+    width: 100%;
+}
+
+.slider {
+    border-radius: 0.4em;
+    width: 16em;
+}
+
+.slider input {
+    opacity: 40%;
+}
+
+.hue {
+    background: linear-gradient(
+        to right, 
+        #ff0000, 
+        #ffff00, 
+        #00ff00, 
+        #00ffff, 
+        #0000ff, 
+        #ff00ff, 
+        #ff0000);
+}
+
+.sat {
+    background: linear-gradient(
+        to right, 
+        #ffffff,
+        rgba(0,0,0,0));
+}
+
+.bri {
+    background: linear-gradient(
+        to right, 
+        #000000,
+        #ffffff);
+}

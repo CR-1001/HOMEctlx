@@ -1,0 +1,58 @@
+<!--This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+    Distributed under terms of the GPL3 license. -->
+    
+<!doctype html>
+<html>
+    <head>
+
+        <title>HOMECTL</title>
+
+        <meta charset="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link 
+            rel="stylesheet" 
+            href="{{ url_for('static', filename='styles.css') }}">
+
+        <script src="{{ url_for('static', filename='jquery-3.7.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='common.js') }}"></script>
+
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+        {% block external %}{% endblock %}
+
+    </head>
+
+    <body>
+
+        <div class="page-content center">
+            
+            <div class="page-header header">
+
+                <a href="/">
+                    <span class="section-0">HOME</span>
+                    <span class="section-0 section-0b">CTL</span>
+                </a>
+                <span class="section-2">&nbsp;❯&nbsp;</span>
+                <span class="section-1 accent-{% block accent %}{% endblock %}">
+                    {% block title %}{% endblock %}
+                </span>
+                <br>
+
+                {% block header %}{% endblock %}
+
+            </div>
+
+            {% block content %}{% endblock %}
+
+            <div class="footer">
+
+                {% block footer %}{% endblock %}
+            
+            </div>
+
+        </div>
+
+    </body>
+</html>

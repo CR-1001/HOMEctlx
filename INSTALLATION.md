@@ -1,0 +1,96 @@
+This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch. 
+Distributed under terms of the GPL3 license.
+
+# Installation
+
+## Create a virtual environment
+Copy HomeCtl to a place like /srv and change into the directory.
+  cd /srv/HomeCtl
+Requires Python, pip, python3-venv.
+Create the virtual environment.
+  python3 -m venv .venv
+Activate it.
+  source .venv/bin/activate
+Install Flask and WSGI components.
+  pip install -r ./etc/requirements.txt
+Environments are not portable, create them in place.
+
+## Install, configure, and run the WSGI server
+Install uWSGI using the package manager of your system.
+  sudo [apt-get|dnf|...] install uwsgi
+  sudo [apt-get|dnf|...] install uwsgi-plugin-python3
+
+Run the WSGI server to test the setup so far.
+  uwsgi --ini /srv/HomeCtl/etc/homectl.uwsgi-config
+Open localhost:5010 in a browser and check if it works. 
+Kill the process afterwards.
+
+Configure the WSGI server by creating the configuration file.
+See /srv/HomeCtl/etc/homectl.uwsgi.ini. Change the value for chdir and uid.
+  sudo nano /etc/uwsgi/apps-available/homectl.ini
+    [uwsgi]
+    plugins      = python3
+    socket       = 127.0.0.1:5010
+    chdir        = /srv/HomeCtl
+    protocol     = http
+    wsgi-file    = app.py
+    callable     = app
+    processes    = 4
+    threads      = 2
+    buffer-size  = 32768
+    stats        = 127.0.0.1:9191
+    virtualenv   = /srv/HomeCtl/.venv
+    http-timeout = 86400
+    uid          = chris
+
+Add to enabled sites.
+  sudo ln -s /etc/uwsgi/apps-available/homectl.ini /etc/uwsgi/apps-enabled
+
+Enable and (re)start.
+  sudo systemctl enable uwsgi
+  sudo systemctl start uwsgi
+
+## Install, configure, and run the web-server
+Install Nginx using the package manager of your system.
+  sudo [apt-get|dnf|...] install nginx
+
+Configure the reverse proxy by creating the configuration file.
+  sudo nano /etc/nginx/sites-available/homectl
+    server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        location / {
+            proxy_pass http://localhost:5010;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+
+Add to enabled sites.
+You might need to remove the default configuration if conflicting.
+  sudo rm /etc/nginx/sites-enabled/default
+  sudo ln -s /etc/nginx/sites-available/homectl /etc/nginx/sites-enabled/default
+  sudo chmod o+x /etc/uwsgi/apps-enabled/homectl.ini
+
+Test the configuration.
+  sudo nginx -t
+
+Enable and (re)start.
+  sudo systemctl enable nginx
+  sudo systemctl start nginx
+
+## Enable lightctl
+Make scrips executable-
+  chmod +x ./external/lightctl-c.sh
+  chmod +x ./external/lightctl-test.sh
+Change the config.json accordingly:
+Bridge address and user name have to be set. 
+See lightctl --help.
+
+## Enable mediactl
+Put your media files to share into the srv directory.
+
+## Remarks
+Alternatively, install GUnicorn and adapt the previous installation steps.

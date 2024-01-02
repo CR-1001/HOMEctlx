@@ -1,0 +1,52 @@
+{# This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+    
+{% for m in groups %}
+
+<div class="container-1 back-1">
+
+    {% if m.head.name != "" %}
+
+    <div 
+        class="action indent-1" 
+        data-id="{{m.id}}" 
+        data-type="grp">
+        
+        {% include 'lights/header.html' %}
+
+        {% include 'lights/values.html' %}
+
+        {% include 'lights/input.html' %}
+
+    </div>
+
+    {% endif %}
+
+
+    {% for m in m.members %}
+
+    <div 
+        data-type="dev"
+        data-id="{{m.id}}" 
+        style="background-color: rgb({{ m.red }},{{ m.gre }},{{ m.blu }});" 
+        class="container-1">
+
+        <div class="action indent-1">
+
+            {% include 'lights/header.html' %}
+            
+            {% include 'lights/values.html' %}
+            
+            {% include 'lights/input.html' %}
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+    <br>
+
+</div>
+
+{% endfor %}

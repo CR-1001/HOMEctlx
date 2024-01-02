@@ -1,0 +1,32 @@
+{# This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+    
+<table class="table-1 info">
+    <tr>
+        <td>PWR</td>
+        <td>BRI</td>
+        <td>HUE</td>
+        <td>SAT</td>
+    </tr>
+    <tr>
+        <td 
+        {% if m.pwr == "off" %}
+            class="inactive"
+        {% else %}
+            class="xaccent-1"
+        {% endif %}
+        
+        >{{ m.pwr }}</td>
+        <td>{{ m.bri }}%</td>
+        <td>
+        {% if m.has_hue %}
+            {{ m.hue }}°
+        {% endif %}
+        </td>
+        <td>
+        {% if m.has_sat %}
+            {{ m.sat }}%
+        {% endif %}
+        </td>
+    </tr>
+</table>
