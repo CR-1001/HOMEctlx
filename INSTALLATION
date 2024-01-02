@@ -82,10 +82,9 @@ Enable and (re)start.
   sudo systemctl start nginx
 
 ## Enable lightctl
-Make scrips executable-
-  chmod +x ./external/lightctl-c.sh
+Make the lightctl test scripts executable.
   chmod +x ./external/lightctl-test.sh
-Change the config.json accordingly:
+Change the config.json accordingly to use lightctl:
 Bridge address and user name have to be set. 
 See lightctl --help.
 
