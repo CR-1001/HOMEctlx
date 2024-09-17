@@ -1,22 +1,87 @@
-/* This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+/* This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
    Distributed under terms of the GPL3 license. */
    
 html {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Fira Code', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
     background-color: rgb(30, 30, 30);
     color: rgb(210, 210, 210);
-    padding: 2em;
-    text-shadow: 0.1em 0.1em 0.1em black;
-    line-break: anywhere;
+    padding: 1em;
+    text-shadow: 0.05em 0.05em 0.05em black;
     user-select: none;
 }
 
+table {
+    border-collapse: collapse;
+    text-align: start;
+}
+
+table td {
+    vertical-align: top;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+textarea {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    width: 90%;
+}
+
+.wrapper {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.background-grid {
+    pointer-events: none; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 90%;
+    height: 90%;
+    margin-right: 6em;
+}
+
+.tile {
+    transition: background-color 4s ease;
+    border-radius: 0.5em;
+    opacity: 5%;
+}
+
+.top {
+    z-index: 100;
+    position: relative;
+}
+
+.page-content {
+    min-width: 40em;
+}
+
 .page-header {
-    position: sticky; 
-    background-color: rgb(30, 30, 30);
+    position: sticky;
     top: 0; 
     left: 0;
     margin-bottom: 1em;
+    margin-top: 0.6em;
+    text-decoration: none;
+    z-index: 1000;
+}
+
+.section {
+    margin-bottom: 1em;
+}
+
+.menu {
+    font-size: 1.3em;
+    line-height: 2em;
+    z-index: 1000;
+    position: relative;
 }
 
 .center {
@@ -44,43 +109,73 @@ html {
     margin-right: 4em;
 }
 
+.vspace-1 {
+    margin-bottom: 1em;
+}
+
 .width-0 {
-    width: 80em;
+    min-width: 80em;
 }
 
 .width-1 {
-    width: 27em;
+    width: 14em;
+}
+
+.width-4 {
+    width: 29em;
 }
 
 .width-3 {
     width: 60em;
 }
 
-.width-5 {
-    width: 4em;
+.label {
+    padding-top: 0.8em;
+    margin-bottom: 0.5em;
 }
 
-.table-1 {
+.table-2 {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-2 th, td {
+    text-align: left;
+}
+
+.table-3 {
+    border-collapse: collapse;
     text-align: start;
     min-height: 2em;
 }
 
-.table-1 td {
-    width: 4em;
+.table-3 td {
+    min-width: 3em;
     vertical-align: top;
     min-height: 2em;
 }
 
+.right-aligned {
+    text-align: right;
+}
+
 .container-1 {
-    box-shadow: 0.5em 0.5em 0.2em 0.2em rgba(20, 20, 20, 0.5);
+    box-shadow: 0.2em 0.2em 0.2em 0.2em rgba(10, 10, 10, 0.7);
     border-radius: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
     padding-top: 0.3em;
     padding-bottom: 0.3em;
-    margin-left: 1em;
+    margin-bottom: 0.8em;
+}
+
+.recess {
+    box-shadow: -0.1em -0.1em 0.1em 0.1em rgba(10, 10, 10, 0.7);
+    border-radius: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.3em;
     margin-right: 1em;
-    margin-top: 0.8em;
 }
 
 .img-1 {
@@ -107,9 +202,18 @@ html {
     display: flex;
 }
 
+.selectable {
+    user-select: text;
+}
+
 .color-2 {
     width: 8em;
     height: 6em;
+}
+
+.back-0 {
+    border-radius: 0.5em;
+    background-color: rgb(30, 30, 30);
 }
 
 .back-1 {
@@ -127,56 +231,113 @@ html {
     background-color: rgb(60, 60, 60);
 }
 
+.back-x1 {
+    border-radius: 0.5em;
+    background: linear-gradient(
+        to bottom right, 
+        rgba(10, 20, 10, 0.25),
+        rgba(30, 30, 20, 0.25),
+        rgba(10, 20, 10, 0.25));
+}
+
+.back-x2 {
+    border-radius: 0.5em;
+    background-color: rgb(40, 40, 30);
+}
+
 .bottom-sticky {
     position: sticky;
     padding: 1em;
     bottom: 3em;
 }
 
-.header {
-    margin-top: 0.6em;
-    text-decoration: none;
-}
-
-.section-0 {
+.title-0 {
+    color: white;
     text-shadow: 
-    0.1em 0.1em 0.1em black,
-    0.1em -0.1em 0em rgb(120, 200, 200),
-    -0.1em 0.1em 0em rgb(200, 120, 200);
+    0em 0em 0.6em rgb(0, 255, 255),
+    0.05em 0.05em 0.05em black;
     font-weight: bold;
     font-size: 2em;
 }
 
-.section-0b {
-    font-weight: bold;
-    font-size: 1em;
-    margin-left: -0.5em;
-    vertical-align: bottom;
-    font-style: oblique;
+.title-0b {
+    font-size: 0.7em;
+    margin-left: -0.8em;
     letter-spacing: -0.1em;
 }
 
-.section-1 {
+.title-0c {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 0.7em;
+    margin-left: -0.8em;
+    vertical-align: bottom;
+    font-style: oblique;
+    letter-spacing: -0.15em;
+}
+
+.glow-a {
+    text-shadow: 
+    0em 0em 0.1em rgb(0, 255, 255, 0.7),
+    0.05em 0.05em 0.05em black;
+}
+
+.glow-b {
+    text-shadow: 
+    0em 0em 0.1em rgb(0, 0, 255),
+    0.05em 0.05em 0.05em black;
+}
+
+.glow-c {
+    text-shadow: 
+    0em 0em 0.2em rgb(255, 255, 0),
+    0.05em 0.05em 0.05em black;
+}
+
+.glow-e {
+    text-shadow: 
+    0em 0em 0.2em rgb(255, 0, 0),
+    0.05em 0.05em 0.05em black;
+}
+
+.section-body {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.title-1 {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-size: 1.3em;
     color: rgb(250, 250, 250);
 }
 
-.section-2 {
+.title-2 {
     font-size: 1.1em;
+    margin-bottom: 0.5em;
     color: rgb(240, 240, 240);
 }
 
-.section-3 {
+.title-3 {
     font-size: 1.0em;
     color: rgb(230, 230, 230);
 }
 
-input,a,a:visited,.action {
+input,a,a:visited,.action,textarea {
     text-decoration: none;
     color: rgb(230, 230, 230);
-    margin-bottom: 0.4em;
+    margin-bottom: 0.6em;
+    border: 0em;
+}
+
+input,a,a:visited,.action {
     cursor: pointer;
+}
+
+select, button {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: transparent;
+    color: rgb(210, 210, 210);
+    border: none;
 }
 
 .info {
@@ -184,7 +345,7 @@ input,a,a:visited,.action {
 }
 
 .inactive {
-    color: rgba(180, 180, 180, 0.3);
+    color: rgba(180, 180, 180, 0.7);
 }
 
 .clear {
@@ -193,24 +354,8 @@ input,a,a:visited,.action {
     line-height: 1.5em;
 }
 
-.xaccent-1 {
-    color: rgb(255, 230, 160);
-}
-
-.xaccent-2 {
-    color: rgb(200, 255, 130);
-}
-
-.xaccent-3 {
-    color: rgb(220, 205, 255);
-}
-
-.xaccent-4 {
-    color: rgb(255, 150, 200);
-}
-
-.xaccent-5 {
-    color: rgb(152, 255, 238);
+.invert-selection {
+    margin-top: 0.5em;
 }
 
 .rotate {
@@ -225,10 +370,29 @@ input,a,a:visited,.action {
 .slider {
     border-radius: 0.4em;
     width: 16em;
+    height: 1.6em;
 }
 
 .slider input {
-    opacity: 40%;
+    opacity: 30%;
+}
+
+.light {
+    width: 22em;
+}
+
+.light-grp-off {
+    width: 24em;
+    background: rgb(40, 40, 40); 
+}
+
+.light-grp-on {
+    width: 24em;
+    background: linear-gradient(
+        to bottom, 
+        rgb(60, 60, 60) 3.5em,
+        rgb(40, 40, 40) 3.5em
+    );
 }
 
 .hue {
@@ -255,4 +419,26 @@ input,a,a:visited,.action {
         to right, 
         #000000,
         #ffffff);
+}
+
+.md-back {
+    padding: 1em;
+    background-color: rgba(200, 255, 255, 0.04);
+}
+
+.md-header {
+    font-weight: bold;
+    line-height: 1.2em;
+}
+
+.md-header-1 {
+    font-size: 1.4em;
+}
+
+.md-header-2 {
+    font-size: 1.2em;
+}
+
+.md-header-3 {
+    color: rgb(240, 255, 255)
 }

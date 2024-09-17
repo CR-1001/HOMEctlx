@@ -1,58 +1,45 @@
-<!--This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+<!--This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
     Distributed under terms of the GPL3 license. -->
-    
+
 <!doctype html>
 <html>
-    <head>
 
-        <title>HOMECTL</title>
+<head>
 
-        <meta charset="UTF-8">
+    <title>HOMEctl</title>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-        <link 
-            rel="stylesheet" 
-            href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <script src="{{ url_for('static', filename='jquery-3.7.1.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='common.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="{{ url_for('static', filename='common.js') }}"></script>
+    <script src="{{ url_for('static', filename='cmdex.js') }}"></script>
+    <script src="{{ url_for('static', filename='animation.js') }}"></script>
 
-        {% block external %}{% endblock %}
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-    </head>
+    {% block external %}{% endblock %}
 
-    <body>
+</head>
 
-        <div class="page-content center">
+<body>
+    <div class="wrapper">
+        <div class="background-grid"></div>
+        <div class="page-content center top">
             
-            <div class="page-header header">
-
-                <a href="/">
-                    <span class="section-0">HOME</span>
-                    <span class="section-0 section-0b">CTL</span>
-                </a>
-                <span class="section-2">&nbsp;❯&nbsp;</span>
-                <span class="section-1 accent-{% block accent %}{% endblock %}">
-                    {% block title %}{% endblock %}
-                </span>
-                <br>
-
-                {% block header %}{% endblock %}
-
-            </div>
-
-            {% block content %}{% endblock %}
-
-            <div class="footer">
-
-                {% block footer %}{% endblock %}
+            {% include 'header.html' %}
             
+            <div id="body">
+                <div id="_error">
+                </div>
+                <div>
+                    {% block content %}{% endblock %}
+                </div>
             </div>
-
         </div>
+    </div>
+</body>
 
-    </body>
 </html>

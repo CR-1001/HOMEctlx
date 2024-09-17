@@ -1,0 +1,64 @@
+{# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+
+
+{% if form.table == True %}
+<details class="section"
+{% if form.haskey() %}id="{{form.key}}"{% endif %} 
+{% if form.open %}open{% endif %}>
+
+    <summary class="title-2 glow-a">
+        <span>{{form.name}}</span>
+    </summary>
+
+    <div class="section-body">
+        <form>
+            <table>
+                {% for field in form.fields %}
+                    {% if field.type() in ["execute", "execute_params"] %}
+                        <tr>
+                            <td colspan="2">
+                                <div>
+                                    {% include 'field.html' %}
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% else %}
+                        <tr {% if field.type() in ["hidden", "autoupdate"] %}style="display: none;"{% endif %}>
+                            <td>
+                                {% if field.desc != None %}
+                                <div class="info indent-1">{{field.desc}}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% include 'field.html' %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </form>
+    </div>
+
+</details>
+
+{% else %}
+<div id="{{form.key}}" class="section">
+    {% if form.name not in [None, ""] %}
+        <p class="title-2 glow-a">{{form.name}}</p>
+    {% endif %}
+    <form>
+        {% for field in form.fields recursive %}
+            {% if field.desc != None %}
+            <span class="info">{{field.desc}}&nbsp;<br><br></span>
+            {% endif %}
+            {% include 'field.html' %}
+            {% if field.fields %}
+                {{ loop(field.fields) }}
+            {% endif %}
+        {% endfor %}
+    </form>
+</div>
+
+{% endif %}

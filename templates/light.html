@@ -1,0 +1,109 @@
+{# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+
+
+{% macro values(dev, vm, func, is_grp=False) %}
+
+<div
+    {% if not is_grp -%}
+    class="container-1 back-1 light" 
+    style="background-color: rgb({{ dev.red }},{{ dev.gre }},{{ dev.blu }});"
+    {%- endif %}>
+    <table class="info">
+        <tr>
+            <td colspan="2">
+                <span>{{dev.name}}&nbsp;</span>
+            </td>
+            <td>
+                <div class="fieldset">
+                    <span 
+                        class="execute title-2 {% if dev.pwr == "off" %}inactive{% else %}glow-c{% endif %}"
+                        data-vm="{{vm}}" 
+                        data-func="{{func}}">
+                        &nbsp;{{dev.pwr}}
+                    </span>
+                    <input type="hidden" name="type" 
+                        value="{% if is_grp %}grp{% else %}dev{% endif %}">
+                    <input type="hidden" name="id" value="{{dev.id}}">
+                    <input type="hidden" name="attr" value="pwr">
+                    <input type="hidden" name="value" value="{% if dev.pwr == "off" %}on{% else %}off{% endif %}">
+                </div>
+            </td>
+        </tr>
+        <tr><td colspan="2"></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+        <tr>
+            <td>BRI&nbsp;</td>
+            <td>
+                <div class="bri slider fieldset">
+                    <input class="inp-bri execute" 
+                        data-vm="{{vm}}" 
+                        data-func="{{func}}" 
+                        name="value" 
+                        type="range" min="0" max="100" 
+                        value="{{dev.bri}}">
+                    <input type="hidden" name="type" 
+                        value="{% if is_grp %}grp{% else %}dev{% endif %}">
+                    <input type="hidden" name="id" value="{{dev.id}}">
+                    <input type="hidden" name="attr" value="bri">
+                </div>
+            </td>
+            <td>&nbsp;{{dev.bri}}%</td>
+        </tr>
+        {% if dev.has_hue %}
+        <tr>
+            <td>HUE&nbsp;</td>
+            <td>
+                <div class="hue slider fieldset">
+                    <input class="inp-hue execute" 
+                        data-vm="{{vm}}" 
+                        data-func="{{func}}" 
+                        name="value" 
+                        type="range" min="0" max="360" 
+                        value="{{dev.hue}}">
+                    <input type="hidden" name="type" 
+                        value="{% if is_grp %}grp{% else %}dev{% endif %}">
+                    <input type="hidden" name="id" value="{{dev.id}}">
+                    <input type="hidden" name="attr" value="hue">
+                </div>
+            </td>
+            <td>&nbsp;{{dev.hue}}°</td>
+        </tr>
+        {% endif %}
+        {% if dev.has_sat %}
+        <tr>
+            <td>SAT&nbsp;</td>
+            <td>
+                <div 
+                    class="slider sat-slider fieldset"
+                    style="background-image: linear-gradient(to right, rgb({{ dev.red_lsat }},{{ dev.gre_lsat }},{{ dev.blu_lsat }}), rgb({{ dev.red_hsat }},{{ dev.gre_hsat }},{{ dev.blu_hsat }}) )">
+                    <input class="inp-sat execute" 
+                        data-vm="{{vm}}" 
+                        data-func="{{func}}" 
+                        name="value" 
+                        type="range" min="0" max="100" 
+                        value="{{dev.sat}}">
+                    <input type="hidden" name="type" 
+                        value="{% if is_grp %}grp{% else %}dev{% endif %}">
+                    <input type="hidden" name="id" value="{{dev.id}}">
+                    <input type="hidden" name="attr" value="sat">
+                </div>
+            </td>
+            <td>&nbsp;{{dev.sat}}%</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+{% endmacro %}
+
+
+<div class="container-1 back-1 light-grp-{{field.state.head.pwr}}">
+    <div class="indent-1">
+        <br>
+        {{ values(field.state.head, field.vm, field.func, True) }}
+        <br>
+    </div>
+    {% for d in field.state.members.items %}
+        {{ values(d, field.vm, field.func) }}
+    {% endfor %}
+</div>

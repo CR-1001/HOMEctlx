@@ -1,17 +1,33 @@
-# HomeCtl 1.0
+# HomeCtl 2.0
+HomeCtl is a lean and modular smart home system.
 
-HomeCtl is a lean and modular smart home system. Modules:
-  - LightCtl: Control your Philips Hue light system.
-  - MediaCtl: Simple media sharing. 
+## Modules and functions
+- Files:     Share and edit files.
+- Light:     Control your Philips Hue light system.
+- Ambients:  Static or dynamic light settings (with a script language).
+- Alarms:    Schedule alarms and timers.
+- Telemetry: Maintenance functions.
 
-Disclaimer:
-  This program is free software; you can redistribute it and/or modify it under
-  the terms of the GNU General Public License (GPL) version 3 as published by 
-  the Free Software Foundation.
-  This program is shipped with jQuery, see code file for license and details.
-  This program is distributed in the hope that it will be useful, but without
-  any warranty; without even the implied warranty of merchantability or fitness
-  for a particular purpose. 
+## Installation and configuration
+- The accompanying installation manual describes requirements and setup.
+- Configuration (regarding the lightctl executable etc.) is set in config.json.
+- Directory share contains the files to share.
 
-Author:
-  Christian Rauch
+## Technical background
+Most user interface interactions in HomeCtl are handled via a lean view-model 
+framework: HTTP requests are handled by reqhandlers/commands.py. 
+Received arguments are passed to the view-models using services/cmdexec.py.
+The view-models return meta data describing the new state of the user 
+interface. The corresponding HTML is rendered and send to the client.
+JavaScript on the client side, static/cmdex.js, collects data from input 
+fields, calls the server and updates the user interface.
+
+## Disclaimer and author
+This program is free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public License (GPL) version 3 as published by 
+the Free Software Foundation.
+This program is distributed in the hope that it will be useful, but without 
+any warranty; without even the implied warranty of merchantability or fitness 
+for a particular purpose. 
+
+Copyright (C) 2024 Christian Rauch.

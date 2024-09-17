@@ -1,0 +1,28 @@
+  16 off  32  80  28 Tür
+  17 off  24  55  18 Büro
+  18 off 301  41  28 Eingang
+
+$sleep_short  = \ sleep 2
+$ids          = 16,17,18
+
+$sat_high     = ru(70,100)
+
+$hue_rnd      = ru(0,360)
+$hue_cho      = rc(0,180)
+$hue_red      = ru(-30,+30)
+
+$set_red      = $ids on $hue_red $sat_high
+$set_rnd      = $ids on $hue_rnd $sat_high
+$set_cho      = $ids on $hue_cho $sat_high
+
+
+repeat 3 $set_red $sleep_short
+sleep 5
+
+repeat 3 $set_cho $sleep_short
+sleep 5
+
+repeat 3 $set_rnd $sleep_short
+sleep 5
+
+reset

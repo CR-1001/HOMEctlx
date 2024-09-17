@@ -1,0 +1,353 @@
+{# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+
+
+<div class="vspace-1" {% if field.haskey() %}id="{{field.key}}"{% endif %}>
+
+    {% if field.type() == "execute" %}
+    <div
+        data-vm="{{field.vm}}"
+        data-func="{{field.func}}"
+        {% if field.autoupdate != 0 -%}
+        data-autoupdate="{{field.autoupdate}}"
+        {%- endif -%}
+        class="action execute {% if field.important %}glow-a{% endif %}">
+        [{{field.text}}]
+    </div>
+
+    {% elif field.type() == "execute_params" %}
+    <fieldset>
+        {% if field.params != None %}
+            {% for p in field.params %}
+            <input
+                type="hidden"
+                name="{{p}}"
+                value="{{field.params[p]}}">
+            {% endfor %}
+        {% endif %}
+        <div
+            data-vm="{{field.vm}}"
+            data-func="{{field.func}}"
+            class="action execute {% if field.important %}glow-a{% endif %}">
+                [{{field.text}}]
+        </div>
+    </fieldset>
+
+    {% elif field.type() == "autoupdate" %}
+    <fieldset class="hidden">
+        {% if field.params != None %}
+            {% for p in field.params %}
+            <input
+                type="hidden"
+                name="{{p}}"
+                value="{{field.params[p]}}">
+            {% endfor %}
+        {% endif %}
+        <div
+            data-vm="{{field.vm}}"
+            data-func="{{field.func}}"
+            data-autoupdatedelay="{{field.delay}}">
+        </div>
+    </fieldset>
+
+    {% elif field.type() == "pager" and (field.st_idx != 0 or (field.st_idx+field.page_sz) < field.all_sz)%}
+    <fieldset>
+        <span>
+            <span>
+                page {{ ((field.st_idx / field.page_sz) + 1) | int }}
+            </span>
+            {% if field.st_idx != 0 %}
+            <span class="fieldset">
+                <input
+                    type="hidden"
+                    name="st_idx"
+                    value="{{field.st_idx-field.page_sz}}">
+                <span
+                    data-vm="{{field.vm}}"
+                    data-func="{{field.func}}"
+                    data-container="{{field.container}}"
+                    class="action execute {% if field.focus %}bring_into_view{% endif %}">
+                    [prev]
+                </span>
+            </span>
+            {% endif %}
+            {% if (field.st_idx+field.page_sz) < field.all_sz %}
+            <span class="fieldset">
+                <input
+                    type="hidden"
+                    name="st_idx"
+                    value="{{field.st_idx+field.page_sz}}">
+                <span
+                    data-vm="{{field.vm}}"
+                    data-func="{{field.func}}"
+                    data-container="{{field.container}}"
+                    class="action execute {% if field.focus %}bring_into_view{% endif %}">
+                        [next]
+                </span>
+            </span>
+            {% endif %}
+        </span>
+    </fieldset>
+
+    {% elif field.type() == "placeholder" %}
+    <div id="{{field.key}}"></div>
+
+    {% elif field.type() == "error" %}
+        {% if field.text != None %}
+        <div class="error glow-e">
+            {{field.text}}
+        </div>
+        {% endif %}
+    
+    {% elif field.type() == "select" %}
+    <select
+        name="{{field.param}}">
+        {% for v in field.values %}
+        <option 
+            value="{{v.value}}"
+            {% if v == field.default %}selected{% endif %}
+            >
+            {% if v.text != None %}
+                {{v.text}}
+            {% else %}
+                {{v.value}}
+            {% endif %}
+        </option>
+        {% endfor %}
+    </select>
+
+    {% elif field.type() == "triggers" %}
+    <div>
+        {% for v in field.values %}
+        <div
+            data-vm="{{field.vm}}"
+            data-func="{{field.func}}"
+            data-param="{{field.param}}"
+            data-value="{{v.value}}"
+            class="action execute {% if v.important %}glow-a{% endif %}">
+            {% if v.text != None %}
+                [{{v.text}}]
+            {% else %}
+                [{{v.value}}]
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif field.type() == "path" %}
+    <div>
+        <span>[</span>
+        {% for v in field.values %}
+        <span 
+            data-vm="{{field.vm}}"
+            data-func="{{field.func}}"
+            data-param="{{field.param}}"
+            data-value="{{v.value}}"
+            class="action execute {% if v.important %}glow-a{% endif %}">
+            {% if v.text != None %}{{v.text}}{% else %}{{v.value}}{% endif %}
+        </span>
+        {% endfor %}
+        <span>]</span>
+    </div>
+
+    {% elif field.type() == "select_many" %}
+    <div>
+
+        {% for v in field.values %}
+        <div>
+            <input
+                type="checkbox" 
+                class="back-3"
+                {% if v in field.defaults %}checked{% endif %}
+                id="{{field.param}}.{{v.value}}" 
+                name="{{field.param}}" 
+                value="{{v.value}}">
+                <label 
+                    class="indent-1"
+                    for="{{field.param}}.{{v.value}}">
+                    {% if v.text != None %}
+                        {{v.text}}
+                    {% else %}
+                        {{v.value}}
+                    {% endif %}
+                </label>
+        </div>
+        {% endfor %}
+
+        {% if field.values.__len__() > 3 %}
+        <div class="action invert-selection">[invert]</div>
+        {% endif %}
+
+    </div>
+
+    {% elif field.type() == "title" %}
+    <span class="title-2 glow-a">{{field.text}}</span>
+
+    {% elif field.type() == "label" %}
+    <div class="info">
+        {% for line in field.text.split("\n") %}
+            {% for part in line.split(" ") %}{{part}}&nbsp;{% endfor %}<br>
+        {% endfor %}
+    </div>
+
+    {% elif field.type() == "space" %}
+    {% for r in range(field.rows) %}<br>{% endfor %}
+
+    {% elif field.type() == "text" %}
+    <input 
+        class="recess back-3"
+        type="text" 
+        name="{{field.param}}"
+        value="{{field.text}}">
+
+    {% elif field.type() == "text_big" %}
+    <textarea 
+        class="recess back-3"
+        name="{{field.param}}"
+        rows="20"
+        cols="80">{{field.text}}</textarea>
+
+    {% elif field.type() == "text_big_ro" %}
+    <textarea 
+        class="recess back-1"
+        rows="20"
+        cols="80"
+        readonly>{{field.text}}</textarea>
+
+    {% elif field.type() == "response" %}
+        {% if field.text != None %}
+        <pre 
+            class="recess back-1"
+            readonly>{{field.text}}</pre>
+        {% endif %}
+
+    {% elif field.type() == "int" %}
+    <input 
+        class="recess back-3"
+        type="number"
+        name="{{field.param}}"
+        value="{{field.value}}">
+
+    {% elif field.type() == "hidden" %}
+    <input
+        type="hidden"
+        name="{{field.param}}"
+        value="{{field.value}}">
+
+    {% elif field.type() == "download" %}
+    <a 
+        target="_blank"
+        href="/files/share{{field.file}}">
+        [{{field.text}}]
+    </a>
+
+    {% elif field.type() == "upload" %}
+    <input 
+        class="indent-1"
+        name="{{field.param}}"
+        multiple
+        type="file">
+
+    {% elif field.type() == "media" %}
+
+        {% if field.format == "image" %}
+        <img class="img-3" src="/files/share{{field.file}}">
+
+        {% elif field.format == "video" %}
+        <video controls>
+            <source src="/files/share{{field.file}}" type="video/mp4">
+            Not supported by your browser.
+        </video>
+
+        {% elif field.format == "pdf" %}
+        <embed
+            width="800px"
+            height="1000px"
+            type="application/pdf" 
+            src="/files/share{{field.file}}">
+
+    {% endif %}
+
+    {% elif field.type() == "link" %}
+    <a 
+        class="action" 
+        href="{{field.link}}" 
+        target="_blank"
+        >[{{field.text}}]</a>
+
+    {% elif field.type() == "dir" %}
+    <div>
+        <span class="fieldset">
+            <input type="hidden" name="dir" value="{{field.path()}}">
+            <span
+                data-vm="{{field.vm}}"
+                data-func="{{field.func}}"
+                class="action execute title-2">
+                    📂&nbsp;{{field.dir}}&nbsp;
+                    {%- if field.readonly %}🔒&nbsp;{% endif -%}
+                    {%- if field.files != 0 -%}
+                        <span class="inactive">{{field.files}}&nbsp;entries</span>
+                    {%- endif %}
+            </span>
+        </span>
+    </div>
+
+    {% elif field.type() == "file" %}
+    <div>
+        <a target="_blank" href="/files/share/{{field.link}}">
+            <span class="title-2">
+                📄&nbsp;{{field.file}}&nbsp;{%if field.readonly %}🔒{% endif %}
+            </span>
+            <!--<br>
+            <span class="fieldset">
+                <input type="hidden" name="dir"  value="{{field.dir}}">
+                <input type="hidden" name="file" value="{{field.file}}">
+                <span data-vm="{{field.vm}}" data-func="{{field.func}}"
+                class="action execute {% if field.important %}glow-a{% endif %}"
+                >[edit]</span>
+            </span>-->
+        </a>
+    </div>
+
+    {% elif field.type() == "applink" %}
+    <span class="info">open </span>
+    <a  class="action glow-a" href="{{field.link}}">
+        [&nbsp;{{field.text}}&nbsp;]</a>
+
+    {% elif field.type() == "markdown" %}
+    <div class="md-back recess">
+        {% for v in field.values %}
+
+            {% if v['type'].startswith("header-") %}
+            <span 
+                class="glow-b md-header md-{{v['type']}}"
+                >{{v.desc}}</span>
+
+            {% elif v['type'] == "link" %}
+            <a 
+                class="action" 
+                href="{{v['link']}}" 
+                target="_blank"
+                >[{{v['desc']}}]</a>
+
+            {% elif v['type'] == "break" %}
+            <br>
+        
+            {% else %}
+            <span class="info">{{v['desc']}}</span>
+
+            {% endif %}
+        
+        {% endfor %}
+    </div>
+
+    {% elif field.type() == "light" %}
+    {% include 'light.html' %}
+
+    {% else %}
+    {# elif field.type() == "text_ro" #}
+    <span class="info">{{field.text}}</span>
+
+    {% endif %}
+
+</div>

@@ -1,0 +1,11 @@
+$decke on $blue $full
+sleep 5
+
+repeat 30    $esstisch on $fl     \ sleep 1
+
+#$decke on $azure $full
+#sleep 5
+
+#repeat 20   $esstisch on $il \ $balkon on $dl \ sleep 2
+
+reset

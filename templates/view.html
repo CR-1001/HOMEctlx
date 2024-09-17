@@ -1,0 +1,18 @@
+{# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+
+<div 
+{% if view.haskey() %}id="{{view.key}}"{% endif %}  
+{% if view.open %}open{% endif %}>
+
+    <div class="title-1 glow-a">{{view.name}}</div>
+
+    <div>
+        {% for form in view.forms %}
+        
+            {% include 'form.html' %}
+        
+        {% endfor %}
+    </div>
+    
+</div>

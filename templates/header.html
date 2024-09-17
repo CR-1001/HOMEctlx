@@ -1,0 +1,23 @@
+{# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+    Distributed under terms of the GPL3 license. #}
+    
+<div class="page-header">
+    <div class="container-1 back-1 flex">
+        <div class="width-1">
+            <details 
+                id="menu" 
+                {% if request.path in ["/start/ctl", "/"] %}open{% endif %}>
+                <summary class="title-0">
+                    <span>HOME</span>
+                    <span class="title-0b">ctl</span>
+                </summary>
+                <div class="back-1 container-1" style="position: absolute;">
+                    {% include 'menu.html' %}
+                </div>
+            </details>
+        </div>
+        <div class="indent-1">
+            <div id="_header"></div>
+        </div>
+    </div>
+</div>

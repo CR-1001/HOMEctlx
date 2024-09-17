@@ -1,0 +1,20 @@
+$s   = \ sleep ru(1,10)
+$m   = \ sleep ru(5,30)
+$l   = \ sleep ru(10,60)
+
+$decke on $redish $fullish
+sleep 3
+
+repeat 5   $decke on $fxl $fs  \ sleep 3
+
+$decke on $blueish $fullish
+sleep 3
+
+repeat 5   $decke on $fxl $fs  \ sleep 3
+
+$decke on $randomhue $fullish
+sleep 3
+
+repeat 5   $decke on $fxl $fs  \ sleep 3
+
+call ceiling

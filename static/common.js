@@ -1,65 +1,98 @@
-/* This file is part of HomeCtl. Copyright (C) 2023 Christian Rauch.
+/* This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
    Distributed under terms of the GPL3 license. */
 
-function set_input(selector, value) {
-    $(selector)
-        .attr("value", value)
-        .css("visibility", value == "-" ? "collapse" : "visible")
+/*
+Common.
+*/
+
+function setInput(selector, value) {
+    const element = document.querySelector(selector);
+    if (element) {
+        element.setAttribute("value", value);
+        element.style.visibility = value === "-" ? "collapse" : "visible";
+    }
 }
 
-function set_text(selector, text) {
-    $(selector).text(text)
+function setText(selector, text) {
+    const element = document.querySelector(selector);
+    if (element) {
+        element.textContent = text;
+    }
 }
 
-function set_color(selector, red1, gre1, blu1, red2, gre2, blu2) {
-
-    col1 = to_rgb_css(red1, gre1, blu1, 1)
-    col2 = to_rgb_css(red2, gre2, blu2, 1)
-    
-    $(selector).css(
-        "background-image", 
-        //"linear-gradient(to top, " + col0 + " 75%, " + col1 + " 25%)")
-        "linear-gradient(to right, " + col1 + ", " + col2 + " )")
+function setColor(selector, red1, gre1, blu1, red2, gre2, blu2) {
+    const element = document.querySelector(selector);
+    if (element) {
+        const col1 = toRgbCss(red1, gre1, blu1, 1);
+        const col2 = toRgbCss(red2, gre2, blu2, 1);
+        element.style.backgroundImage = `linear-gradient(to right, ${col1}, ${col2})`;
+    }
 }
 
-function set_visible(selector, is_visible) {
-    element = $(selector)
-    element.css("visibility", is_visible ? "visible" : "collapse")
+function setVisible(selector, isVisible) {
+    const element = document.querySelector(selector);
+    if (element) {
+        element.style.visibility = isVisible ? "visible" : "collapse";
+    }
 }
 
-function get_data(selector, key) {
-    data_key = "data-" + key
-    element = $(selector).closest("[" + data_key + "]")
-    return element.attr(data_key)
+function getData(selector, key) {
+    const dataKey = `data-${key}`;
+    const element = document.querySelector(selector);
+    if (element) {
+        const closestElement = element.closest(`[${dataKey}]`);
+        return closestElement ? closestElement.getAttribute(dataKey) : null;
+    }
+    return null;
 }
 
-function set_data(selector, key, value) {
-    data_key = "data-" + key
-    $(selector).attr(data_key, value)
+function setData(selector, key, value) {
+    const element = document.querySelector(selector);
+    if (element) {
+        const dataKey = `data-${key}`;
+        element.setAttribute(dataKey, value);
+    }
 }
 
-function get_search_parameter(key, default_value=null) {
-    value = new URLSearchParams(window.location.search).get(key)
-    return value != null ? value : default_value
+function getSearchParameter(key, defaultValue = null) {
+    const value = new URLSearchParams(window.location.search).get(key);
+    return value !== null ? value : defaultValue;
 }
 
-function set_search_parameter(key, value) {
-    url = new URL(location);
+function setSearchParameter(key, value) {
+    const url = new URL(location);
     url.searchParams.set(key, value);
-    history.replaceState({}, "", url)
+    history.replaceState({}, "", url);
 }
 
-function push_state_history_with_search_parameter(key, value) {
-    url = new URL(location);
+function pushStateHistoryWithSearchParameter(key, value) {
+    const url = new URL(location);
     url.searchParams.set(key, value);
-    history.pushState({}, "", url)
+    history.pushState({}, "", url);
 }
 
-function to_rgb_css(red, gre, blu, transparency) {
-    return "rgb(" + red + ", " + gre + ", " + blu + ", " + transparency + ")"
+function toRgbCss(red, gre, blu, transparency) {
+    return `rgb(${red}, ${gre}, ${blu}, ${transparency})`;
 }
 
-function is_number(str) {
-    number = /^[0-9]+$/.test(str)
-    return number;
+function isNumber(str) {
+    return /^[0-9]+$/.test(str);
+}
+
+function clean(text) {
+    return text.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
+}
+
+function invertSelection(container) {
+    const checkboxes = document.querySelectorAll(`${container} :checkbox`);
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = !checkbox.checked;
+    });
+}
+
+function bringIntoView(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }
 }
