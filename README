@@ -1,26 +1,21 @@
 # HomeCtl 2.0
 HomeCtl is a lean and modular smart home system.
 
-## Modules and functions
-- Files:     Share and edit files.
-- Light:     Control your Philips Hue light system.
-- Ambients:  Static or dynamic light settings (with a script language).
-- Alarms:    Schedule alarms and timers.
-- Telemetry: Maintenance functions.
+## Modules and Functions
+- **Files**: Share and edit files.
+- **Light**: Control your Philips Hue light system.
+- **Ambients**: Static or dynamic light settings (with a scripting language).
+- **Alarms**: Schedule alarms and timers.
+- **Telemetry**: Maintenance functions.
 
-## Installation and configuration
-- The accompanying installation manual describes requirements and setup.
-- Configuration (regarding the lightctl executable etc.) is set in config.json.
-- Directory share contains the files to share.
+## Installation and Configuration
+- The accompanying installation manual describes the requirements and setup process.
+- Configuration (regarding the `lightctl` executable, etc.) is set in `config.json`.
+- The `share` directory contains the files to be shared (and the landing page `start.md`). 
 
-## Technical background
-Most user interface interactions in HomeCtl are handled via a lean view-model 
-framework: HTTP requests are handled by services/reqhandler.py. 
-Received arguments are passed to the view-models in viewmodels.
-The view-models return meta data describing the new state of the user 
-interface. The corresponding HTML is rendered and send to the client.
-JavaScript on the client side, cmdex.js, collects data from input 
-fields, calls the server and updates the user interface.
+## Technical Background
+Most user interface interactions in HomeCtl are handled via a lean view-model framework. HTTP requests are managed by `services/reqhandler.py`. Received arguments are passed to the view-models in the `viewmodels` module. The view-models return metadata describing the new state of the user interface. The corresponding HTML is rendered and sent to the client. JavaScript on the client side, `cmdex.js`, collects data from input fields, calls the server, and updates the user interface.
+
 
 ## Disclaimer and author
 This program is free software; you can redistribute it and/or modify it under 
