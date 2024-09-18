@@ -207,13 +207,15 @@ class applink(uielement):
 
 
 @dataclass
-class markown(uielement):
+class markdown(uielement):
     content:list
+    recess:bool=True
 
 
 @dataclass
 class title(uielement):
     text:str
+    order:int=1
 
 
 @dataclass
@@ -265,3 +267,8 @@ class light(uielement):
     vm:str
     func:str
     state:State
+
+
+@dataclass
+class menu(uielement):
+    pass

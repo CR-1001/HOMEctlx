@@ -1,20 +1,28 @@
 {# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
     Distributed under terms of the GPL3 license. #}
-    
+
+{% macro title() %}
+<span class="title-0">
+    <span>HOME</span>
+    <span class="title-0b">ctl</span>
+</span>
+{% endmacro %}
+
 <div class="page-header">
     <div class="container-1 back-1 flex">
         <div class="width-1">
-            <details 
-                id="menu" 
-                {% if request.path in ["/start/ctl", "/"] %}open{% endif %}>
-                <summary class="title-0">
-                    <span>HOME</span>
-                    <span class="title-0b">ctl</span>
+            {%- if request.path not in ["/start/ctl", "/start", "/"] %}
+            <details id="menu" >
+                <summary>
+                    {{ title() }}
                 </summary>
                 <div class="back-1 container-1" style="position: absolute;">
                     {% include 'menu.html' %}
                 </div>
             </details>
+            {% else %}
+            {{ title() }}
+            {% endif %}
         </div>
         <div class="indent-1">
             <div id="_header"></div>

@@ -84,7 +84,7 @@ function createTile() {
 function changeTilesColor() {
     const tiles = document.querySelectorAll('.tile');
     const total = tiles.length;
-    const tilesToChange = Math.floor(Math.random() * total * 0.2);
+    const tilesToChange = Math.floor(Math.random() * total * 0.3);
 
     for (let i = 0; i < tilesToChange; i++) {
         const randomIndex = Math.floor(Math.random() * total);

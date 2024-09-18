@@ -294,7 +294,7 @@
 
     {% elif field.type() == "file" %}
     <div>
-        <a target="_blank" href="/files/share/{{field.link}}">
+        <a target="_blank" href="/files/share{{field.link}}">
             <span class="title-2">
                 📄&nbsp;{{field.file}}&nbsp;{%if field.readonly %}🔒{% endif %}
             </span>
@@ -315,34 +315,31 @@
         [&nbsp;{{field.text}}&nbsp;]</a>
 
     {% elif field.type() == "markdown" %}
-    <div class="md-back recess">
-        {% for v in field.values %}
+    <div class="md-back{% if field.recess %} recess back-2{% endif %}">
+        {% for v in field.content %}
+            {%- if v.type() == "title" -%}
+            <span class="glow-a md-header md-header-{{v.order}}">{{v.text}}</span>
 
-            {% if v['type'].startswith("header-") %}
-            <span 
-                class="glow-b md-header md-{{v['type']}}"
-                >{{v.desc}}</span>
+            {%- elif v.type() == "link" -%}
+            <a class="action glow-a" href="{{v.link}}" target="_blank">{{v.text}}</a>
 
-            {% elif v['type'] == "link" %}
-            <a 
-                class="action" 
-                href="{{v['link']}}" 
-                target="_blank"
-                >[{{v['desc']}}]</a>
-
-            {% elif v['type'] == "break" %}
-            <br>
+            {%- elif v.type() == "space" -%}
+                {%- for v in range(v.rows) -%}
+                <br>
+                {%- endfor -%}
         
-            {% else %}
-            <span class="info">{{v['desc']}}</span>
+            {%- else -%}
+            <span class="info">{{v.text}}</span>
 
-            {% endif %}
-        
+            {%- endif -%}
         {% endfor %}
     </div>
 
     {% elif field.type() == "light" %}
     {% include 'light.html' %}
+
+    {% elif field.type() == "menu" %}
+    {% include 'menu.html' %}
 
     {% else %}
     {# elif field.type() == "text_ro" #}

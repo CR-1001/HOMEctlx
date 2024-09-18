@@ -118,13 +118,13 @@ def read_file_meta_data(path:list[str]):
         "is_image": False,
         "is_video": False,
         "is_pdf":   False,
-        #"is_markdown": False,
+        "is_markdown": False,
         }
     file = share_path(path)
     with mutex:
         if os.access(file, os.W_OK): meta["readonly"] = False
         if path[-1].find(".") < 0 or \
-            path[-1].split('.')[-1] in ["txt", "json", "yaml", "log", "md"]:
+            path[-1].split('.')[-1] in ["txt", "json", "yaml", "log"]:
             bytes = os.path.getsize(file)
             if bytes < 10000 and read_file(path).count("\n") < 1000:
                 meta["is_text"] = True
@@ -138,7 +138,7 @@ def read_file_meta_data(path:list[str]):
                 ["mp4", "mov", "avi", "wmv", "mkv", "flv",
                 "webm","m4v", "mpeg", "mpg", "3gp", "3g2"]:
                 meta["is_video"] = True
-            #elif extension == "md":  meta["is_markdown"] = True
+            elif extension == "md":  meta["is_markdown"] = True
             elif extension == "pdf": meta["is_pdf"] = True
     return meta
 

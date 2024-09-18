@@ -11,6 +11,7 @@ import re
 import services.meta as m
 import services.fileaccess as fa
 from flask import session
+from viewmodels import markdown
 
 
 def ctl(args:dict={}) -> list[m.view]:
@@ -108,7 +109,7 @@ def directory_files(st_idx:int):
         files_content = []
         if session['edit'] or session['content']:
             files_content.append(pager_top)
-        files_content.append(m.label(f"{files_sz} files"))
+            files_content.append(m.label(f"{files_sz} files"))
         for f in files: 
             files_content += file_fields(f)
         pager_bottom = deepcopy(pager_top)
@@ -213,7 +214,7 @@ def file_fields(file:str):
             if   meta["is_image"]:    fields.append(m.media(link, "image"))
             elif meta["is_video"]:    fields.append(m.media(link, "video"))
             elif meta["is_pdf"]:      fields.append(m.media(link, "pdf"))
-            #elif meta["is_markdown"]: fields = _mardown_fields(dir, file)
+            elif meta["is_markdown"]: fields.append(markdown.for_file(session['dir'], file))
         else:
             text = fa.read_file([session['dir'], file])
             fields.append(m.text_big_ro(text))
@@ -239,20 +240,9 @@ def edit(file) -> list[m.form]:
         if   meta["is_image"]:    fields.append(m.media(link, "image"))
         elif meta["is_video"]:    fields.append(m.media(link, "video"))
         elif meta["is_pdf"]:      fields.append(m.media(link, "pdf"))
-        #elif meta["is_markdown"]: fields = _mardown_fields(dir, file)
 
         fields.append(download)
         forms.append(m.form("vf", "view content", fields, True))
-        
-        #if meta["is_markdown"]:
-        #    content  = fa.read_file([session['dir'], file])
-        #    forms.append(
-        #        m.form(
-        #            "uf", "edit content", [
-        #                dir_hidden,
-        #                file_hidden,
-        #                m.text_big("content", content),
-        #            ]))
 
     else:
 
@@ -398,48 +388,6 @@ def upload_file(rename:str, upload):
             name = names[i]
         fa.create_file([session['dir'], name], bytes)
     return directory()
-
-
-def _mardown_fields(file:str) -> list:
-    """ Markdown fields."""
-    fields = []
-    md = []
-    lines    = fa.read_file([session['dir'], file]).split("\n")
-
-    for line in lines:
-
-        if line.startswith("#"):
-            md.append({ 
-                "type": "header-" + str(len(line)-len(line.lstrip('#'))),
-                "desc": line.strip("#")})
-
-        else:
-            links = re.findall(r'\[(.*?)\]\((.*?)\)', line)
-            prev_idx = 0
-            for link in links:
-                replace = f"[{link[0]}]({link[1]})"
-                index = line.find(replace, prev_idx)
-                if index != -1:
-                    md.append({
-                        "type": "span",
-                        "desc": line[prev_idx:index].strip()})
-                    md.append({
-                        "type": "link",
-                        "link": link[1].strip(),
-                        "desc": link[0].strip()})
-                        
-                    prev_idx = index + len(replace)
-            
-            if prev_idx < len(line):
-                md.append({
-                    "type": "span",
-                    "desc": line[prev_idx:].strip()})
-                
-        md.append({ "type": "break" })
-
-    fields.append(m.markown(md))
-
-    return fields
 
 
 def _path_triggers(path:str) -> m.triggers:

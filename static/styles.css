@@ -231,20 +231,6 @@ textarea {
     background-color: rgb(60, 60, 60);
 }
 
-.back-x1 {
-    border-radius: 0.5em;
-    background: linear-gradient(
-        to bottom right, 
-        rgba(10, 20, 10, 0.25),
-        rgba(30, 30, 20, 0.25),
-        rgba(10, 20, 10, 0.25));
-}
-
-.back-x2 {
-    border-radius: 0.5em;
-    background-color: rgb(40, 40, 30);
-}
-
 .bottom-sticky {
     position: sticky;
     padding: 1em;
@@ -283,7 +269,7 @@ textarea {
 
 .glow-b {
     text-shadow: 
-    0em 0em 0.1em rgb(0, 0, 255),
+    0em 0em 0.1em rgb(0, 255, 130),
     0.05em 0.05em 0.05em black;
 }
 
@@ -423,22 +409,18 @@ select, button {
 
 .md-back {
     padding: 1em;
-    background-color: rgba(200, 255, 255, 0.04);
 }
 
 .md-header {
-    font-weight: bold;
-    line-height: 1.2em;
+    line-height: 1.8em;
+    margin-top: 0.6em;
 }
 
 .md-header-1 {
-    font-size: 1.4em;
+    font-weight: bold;
+    font-size: 1.3em;
 }
 
 .md-header-2 {
-    font-size: 1.2em;
-}
-
-.md-header-3 {
-    color: rgb(240, 255, 255)
+    font-weight: bold;
 }
