@@ -79,9 +79,8 @@ textarea {
 
 .menu {
     font-size: 1.3em;
-    line-height: 2em;
     z-index: 1000;
-    position: relative;
+    position: absolute;
 }
 
 .center {

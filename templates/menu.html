@@ -1,11 +1,10 @@
 {# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
     Distributed under terms of the GPL3 license. #}
 
-<div class="menu">
+<div>
 
     <table>
 
-        
         {% for e in [
             ("🚀", "start",      "start"),
             ("📂", "files",      "files"),
@@ -22,8 +21,9 @@
                 <a class="action" href="/{{e[1]}}/ctl">
                     &nbsp;{{e[0]}}&nbsp;{{e[2]}}&nbsp;
                 </a>
+                
             </td>
-            <td> ] </td>
+            <td> ]<br><br></td>
         </tr>
         
         {% endfor %}

@@ -12,11 +12,12 @@
     <div class="container-1 back-1 flex">
         <div class="width-1">
             {%- if request.path not in ["/start/ctl", "/start", "/"] %}
-            <details id="menu" >
+            <details id="menu">
                 <summary>
                     {{ title() }}
                 </summary>
-                <div class="back-1 container-1" style="position: absolute;">
+                <div class="back-1 container-1 menu">
+                    <br>
                     {% include 'menu.html' %}
                 </div>
             </details>
