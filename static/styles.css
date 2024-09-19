@@ -39,7 +39,7 @@ textarea {
 
 .background-grid {
     pointer-events: none; 
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 1;
@@ -49,9 +49,14 @@ textarea {
 }
 
 .tile {
-    transition: background-color 4s ease;
+    transition: background-color 5s ease;
     border-radius: 0.5em;
     opacity: 5%;
+}
+
+.emoji {
+    opacity: 40%;
+    font-size: 1.5em;
 }
 
 .top {
@@ -64,23 +69,30 @@ textarea {
 }
 
 .page-header {
-    position: sticky;
-    top: 0; 
-    left: 0;
-    margin-bottom: 1em;
-    margin-top: 0.6em;
+    min-width: 40em;
+    position: fixed;
+    top: 1em; 
+    left: 1em;
     text-decoration: none;
     z-index: 1000;
+    opacity: 90%;
 }
 
 .section {
     margin-bottom: 1em;
 }
 
+.main {
+    margin-top: 5em;
+}
+
 .menu {
-    font-size: 1.3em;
+    line-height: 2em;
     z-index: 1000;
-    position: absolute;
+    position: fixed;
+    top: 5em;
+    left: 1em;
+    padding: 1em;
 }
 
 .center {
@@ -118,14 +130,6 @@ textarea {
 
 .width-1 {
     width: 14em;
-}
-
-.width-4 {
-    width: 29em;
-}
-
-.width-3 {
-    width: 60em;
 }
 
 .label {
@@ -412,7 +416,7 @@ select, button {
 
 .md-header {
     line-height: 1.8em;
-    margin-top: 0.6em;
+    margin-top: 0.8em;
 }
 
 .md-header-1 {
@@ -422,4 +426,8 @@ select, button {
 
 .md-header-2 {
     font-weight: bold;
+}
+
+.hidden {
+    display: none;
 }

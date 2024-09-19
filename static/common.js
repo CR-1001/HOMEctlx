@@ -96,3 +96,12 @@ function bringIntoView(elementId) {
         element.scrollIntoView({ behavior: 'instant', block: 'start' });
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('logo').addEventListener('click', function() {
+        var menus = document.getElementsByClassName('menu');
+        Array.prototype.forEach.call(menus, function(menu) {
+            menu.classList.toggle('hidden');
+        });
+    });
+});

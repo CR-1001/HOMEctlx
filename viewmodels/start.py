@@ -15,7 +15,7 @@ def ctl(args:dict={}) -> list[m.view]:
 
     forms = []
 
-    forms.append(m.form(None, None, [m.menu(), m.space(2)], True, False))
+    forms.append(m.form(None, None, [m.space(10)], True, False))
 
     try:
         md = markdown.for_file('', 'start.md', False)
