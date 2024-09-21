@@ -1,0 +1,10 @@
+{% macro wheel(devices, start_color, steps=360, delta=1, seconds=1, sat=100) %}
+
+{% for s in range(steps) %}
+  {% for d in devices %}
+    {{d}} on {{(start_color+(delta*s)) % 360}} {{sat}} -
+  {% endfor %}
+  sleep {{seconds}}
+{% endfor %}
+
+{% endmacro %}

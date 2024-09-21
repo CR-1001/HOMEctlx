@@ -32,10 +32,11 @@ def init(fileaccess, lightctlwrapper):
     fa.clean_file(["temp", "running-ambients"], lambda _: True)
 
 
-def all():
+def all(include_macros:bool=False):
     """ Lists the ambients."""
     ambients, _ = fa.list_share_files(["ambients"], True)
-    ambients = [a for a in ambients if not a.startswith('macros/')]
+    if not include_macros:
+        ambients = [a for a in ambients if not a.startswith('macros/')]
     return ambients
 
 def single(name):

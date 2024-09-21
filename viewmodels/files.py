@@ -247,7 +247,6 @@ def edit(file) -> list[m.form]:
     else:
 
         content = fa.read_file([session['dir'], file])
-        lines   = fa.clean_lines(content)
         
         forms.append(
             m.form("uf", "edit content", [
@@ -255,29 +254,35 @@ def edit(file) -> list[m.form]:
                 m.text_big("content", content),
                 m.execute("files", "update_file", "overwrite")
             ]))
+        
+        has_remove_and_import = not meta["is_markdown"] \
+            and not fa.is_essential([session['dir'], file])
 
-        if len(lines) > 0:
+        if has_remove_and_import:
+
+            lines   = fa.clean_lines(content)
+
             forms.append(
                 m.form("rl", "remove entries", [
                     file_hidden,
                     m.select_many("remove", m.choice.makelist(lines), []),
                     m.execute("files", "remove_entries", "remove")
                 ]))
-        
-        files, _       = fa.list_share_files([session['dir']], True)
-        files          = [f for f in files \
-            if f != file and fa.read_file_meta_data([session['dir'], f])["is_text"]]
-        files_template = [f for f in files if f.startswith("template/")]
-        files_rest     = [f for f in files if f not in files_template]
-        files          = [*files_template, * files_rest]
+            
+            files, _       = fa.list_share_files([session['dir']], True)
+            files          = [f for f in files \
+                if f != file and fa.read_file_meta_data([session['dir'], f])["is_text"]]
+            files_template = [f for f in files if f.startswith("template/")]
+            files_rest     = [f for f in files if f not in files_template]
+            files          = [*files_template, * files_rest]
 
-        if len(files) > 0 and not meta["is_markdown"] and not fa.is_essential([session['dir'], file]):
-            forms.append(
-                m.form("t", "import entries", [
-                    file_hidden,
-                    m.select_many("templates", m.choice.makelist(files), []),
-                    m.execute("files", "template"),
-                ]))
+            if len(files) > 0:
+                forms.append(
+                    m.form("t", "import entries", [
+                        file_hidden,
+                        m.select_many("templates", m.choice.makelist(files), []),
+                        m.execute("files", "template"),
+                    ]))
             
     if not fa.is_essential([session['dir'], file]):
         forms.append(

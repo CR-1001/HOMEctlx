@@ -1,20 +1,14 @@
-# bri not changed
-
 {% for _ in range(100) %}
 
-  {{ choice([1,2,3]) }} on
+    {%- if uniform(0,1) < 0.1 %} 
 
-    {%- if uniform(0,1) < 0.1   %} $randomhue 
-    {%- elif uniform(0,1) < 0.1 %} $fl
-    {%- elif uniform(0,1) < 0.5 %} $fs
-    {%- else                    %} {{ choice(['$redish', '$orangeish', '$yellowish', '$roseish', '$magentaish']) }} 
-    {%- endif                   %}
-    
-    {%- if uniform(0,1) < 0.1 %} $randomsat
-    {%- elif uniform(0,1) < 0.1 %} $fl
-    {%- elif uniform(0,1) < 0.5 %} $fs
-    {%- else                    %} $fullish
-    {%- endif                   %}
+      {{ wheel([1,2,3], i(uniform(0,360)), i(uniform(1,10)), 6) }}
+
+    {%- else %} 
+
+      {{ random_with_bias([1,2,3], i(uniform(1,10))) }} 
+
+    {%- endif %}
 
   sleep {{ i(gauss(8,1.5)) }}
 

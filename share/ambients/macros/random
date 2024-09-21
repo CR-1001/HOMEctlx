@@ -1,0 +1,25 @@
+{% macro random_with_bias(devices, changes=10, seconds_mu=8, seconds_sigma=1.5, bias=['$redish', '$orangeish', '$yellowish', '$roseish', '$magentaish']) %}
+
+# bri not changed
+
+{% for _ in range(changes) %}
+
+  {{ choice(devices) }} on
+
+    {%- if uniform(0,1) < 0.1   %} $randomhue 
+    {%- elif uniform(0,1) < 0.1 %} $fl
+    {%- elif uniform(0,1) < 0.5 %} $fs
+    {%- else                    %} {{ choice(bias) }} 
+    {%- endif                   %}
+    
+    {%- if uniform(0,1) < 0.1 %} $randomsat
+    {%- elif uniform(0,1) < 0.1 %} $fl
+    {%- elif uniform(0,1) < 0.5 %} $fs
+    {%- else                    %} $fullish
+    {%- endif                   %}
+
+  sleep {{ i(gauss(seconds_mu, seconds_sigma)) }}
+
+{% endfor %}
+
+{% endmacro %}

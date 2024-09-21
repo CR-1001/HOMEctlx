@@ -6,6 +6,7 @@ View-model for ambients.
 """
 
 from datetime import datetime
+from random import choice
 import time
 import services.lightctlwrapper as lw
 import services.ambinterpreter as ami
@@ -17,24 +18,25 @@ def ctl(args:dict={}) -> list[m.view]:
     """ Starting point."""
     
     states_now_str_devs = lw.exec(f"state", brief=False).split('\n')[1:]
-    all = ami.all()
+    ambients = ami.all()
+    ambients_and_macros = ami.all(True)
 
     forms = []
 
     forms_running = running()
     forms.append(forms_running[0])
 
-    if len(all) > 0:
+    if len(ambients) > 0:
         forms.append(m.form("a-run", "set ambient", [
-            m.triggers("ambients", "run", "name", m.choice.makelist(all)),
+            m.triggers("ambients", "run", "name", m.choice.makelist(ambients)),
             m.space(1)
         ], True, False))
 
     forms += forms_running[1:]
 
-    if len(all) > 0:
+    if len(ambients_and_macros) > 0:
         forms.append(m.form("a-edit", "edit ambient", [
-            m.select("name", m.choice.makelist(all)),
+            m.select("name", m.choice.makelist(ambients_and_macros)),
             m.execute("ambients", "edit", "edit")
         ]))
 
@@ -130,18 +132,18 @@ def edit(name):
         m.view("_body", f"edit ambient: {name}", [
             m.form(None, None, [
                 m.text("name", name, "name"),
-                m.label("ID PWR HUE SAT BRI"),
                 m.text_big("content", content, "script"),
                 m.execute("ambients", "change", "change ambient"),
             ], table=False),
             m.form(None, None, [
+                m.execute("ambients", "ctl", "go back"),
+                m.space(1)
+            ], table=False),
+            m.form(None, "built-in", _builtin(), True, False),
+            m.form(None, None, [
                 m.hidden("name", name),
                 m.execute("ambients", "delete", "delete ambient"),
-            ], table=False),
-            m.form(None, None, [
-                m.execute("ambients", "ctl", "go back"),
-            ], table=False),
-            m.form(None, "built-in", _builtin(), True, False)])]
+            ], table=False)])]
 
 
 def change(name:str, content:str):
@@ -172,15 +174,25 @@ def _builtin():
     """ Returns the built-in variables."""
     predefined = ami.predefined()
     macros = ami.macros()
-    builtin = "\n".join([f"{k}\t=\t{predefined[k]}" for k in predefined.keys()])
-    return [m.text_big_ro('', builtin), m.text_big_ro('', macros)]
+    keys = predefined.keys()
+    padding = len(max(keys, key=lambda k: len(k))) + 1
+    builtin = "\n".join(
+        [f"{k.rjust(padding)}\t= {predefined[k]}" for k in keys])
+    return [
+        m.label("Base syntax:"),
+        m.label("ID PWR HUE SAT BRI"),
+        m.label("Predefined variables:"),
+        m.text_big_ro('', builtin),
+        m.label("Preprocessed macros:"),
+        m.text_big_ro('', macros),
+        m.space(2)]
 
 
 def _name_suggestion():
     """ Suggestes a name for the ambient."""
-    current_hour = datetime.now().hour
+    now = datetime.now()
     name_suggestion = \
-        "morning" if current_hour > 4 and current_hour < 12 \
-        else "afternoon" if current_hour >= 12 and current_hour < 19 \
+        "morning" if now.hour > 4 and now.hour < 12 \
+        else "afternoon" if now.hour >= 12 and now.hour < 19 \
         else "night"
-    return name_suggestion
+    return f'{name_suggestion} {choice("🍌🍉🍇🍓🍔🍕🍦🍷🍬🍭")}'
