@@ -148,14 +148,8 @@ class text_ro(input):
 
 @dataclass
 class text_big_ro(uielement):
-    text:str
-    desc:str=None
-
-
-@dataclass
-class response(uielement):
     key:str
-    text:str=""
+    text:str
     desc:str=None
 
 

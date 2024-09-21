@@ -35,6 +35,7 @@ def init(fileaccess, lightctlwrapper):
 def all():
     """ Lists the ambients."""
     ambients, _ = fa.list_share_files(["ambients"], True)
+    ambients = [a for a in ambients if not a.startswith('macros/')]
     return ambients
 
 def single(name):
@@ -89,6 +90,7 @@ def _run(id, name, states_old:list[State]=None, changed_ids:set[str]=set(), dela
     if delay_seconds > 0:  sleep(delay_seconds)
     if states_old == None: states_old = lw.states()
     script = fa.read_file(["ambients", name])
+    script = f'{macros()}\n{script}'
     tokens = _prepare(script)
     if len(context) == 0: predefined(context)
     _interpret_tokens(id, tokens, states_old, changed_ids, context)
@@ -105,7 +107,9 @@ def _prepare(template):
         while '  ' in t: t = t.replace('  ', ' ')
         return t
     tokens = [_clean_token(t) for t in tokens]
-    #log.debug(f"{template}\nconverted to:\n{'\n'.join(tokens)}")
+    log.debug(f"template:\n{template}")
+    def join(ts): return ('\n'.join(ts))
+    log.debug(f"instructions:\n{join(tokens)}")
     return tokens
 
 
@@ -356,16 +360,21 @@ def predefined(variables:dict={}) -> dict:
     # devices
     for s in sorted(lw.states(), key=lambda x: x.name):
         k = _clean(s.name)
-        if k in variables: 
-            log.info(f"{k} cannot be set, already defined")
-            continue
+        if k in variables: continue
         variables[k] = s.id
     # groups
     for s in sorted(lw.states(True), key=lambda x: x.name):
         k = _clean(s.name)
-        if k in variables: 
-            log.info(f"{k} cannot be set, already defined")
-            continue
+        if k in variables: continue
         variables[k] = ",".join(s.memids)
     return variables
 
+
+def macros() -> str:
+    macros = ''
+    macro_files, _ = fa.list_share_files(['ambients', 'macros'])
+    for m in macro_files:
+        path = fa.sanitize(['ambients', 'macros', m])
+        macro = fa.read_file([path])
+        macros = f'{macros}\n\n# {path}\n\n{macro.strip()}\n'
+    return macros

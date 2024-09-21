@@ -208,16 +208,9 @@
         cols="80">{{field.text}}</textarea>
 
     {% elif field.type() == "text_big_ro" %}
-    <textarea 
-        class="recess back-1"
-        rows="20"
-        cols="80"
-        readonly>{{field.text}}</textarea>
-
-    {% elif field.type() == "response" %}
         {% if field.text != None %}
         <pre 
-            class="recess back-1"
+            class="recess back-1 width-0"
             readonly>{{field.text}}</pre>
         {% endif %}
 

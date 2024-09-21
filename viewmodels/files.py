@@ -217,7 +217,7 @@ def file_fields(file:str):
             elif meta["is_markdown"]: fields.append(markdown.for_file(session['dir'], file))
         else:
             text = fa.read_file([session['dir'], file])
-            fields.append(m.text_big_ro(text))
+            fields.append('', m.text_big_ro('', text))
         fields.append(m.space(1))
     return fields
 
@@ -234,7 +234,7 @@ def edit(file) -> list[m.form]:
 
     meta = fa.read_file_meta_data([session['dir'], file])
 
-    if not meta["is_text"]:
+    if not meta["is_text"] and not meta["is_markdown"]:
 
         fields = []
         if   meta["is_image"]:    fields.append(m.media(link, "image"))
@@ -271,7 +271,7 @@ def edit(file) -> list[m.form]:
         files_rest     = [f for f in files if f not in files_template]
         files          = [*files_template, * files_rest]
 
-        if len(files) > 0 and not fa.is_essential([session['dir'], file]):
+        if len(files) > 0 and not meta["is_markdown"] and not fa.is_essential([session['dir'], file]):
             forms.append(
                 m.form("t", "import entries", [
                     file_hidden,

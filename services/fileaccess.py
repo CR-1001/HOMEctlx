@@ -106,7 +106,7 @@ def read_file(path:list[str], default:str="") -> str:
     try:
         with mutex, open(share_path(path), "r") as f: return f.read()
     except Exception as e:
-        log.warn(f"File '{path}' could not be read: {e}")
+        log.info(f"File '{path}' could not be read: {e}")
         return default
 
 
@@ -251,6 +251,7 @@ def is_essential(path:list[str]):
             ["documents"],
             ["documents", "templates"],
             ["ambients"],
+            ["ambients", "macros"],
             ["temp"],
             ["temp", "running-ambients"],
             ["temp", "scheduled-tasks"],

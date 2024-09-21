@@ -41,10 +41,7 @@ def ctl(args:dict={}) -> list[m.view]:
     forms.append(
         m.form("a-create", "create ambient", [
             m.text("name", _name_suggestion()),
-            m.label("ID PWR HUE SAT BRI"),
-            m.text_big("states", '\n'.join(states_now_str_devs)),
-            m.execute("ambients", "create", "create"),
-            _builtin(),
+            m.execute("ambients", "edit", "create")
         ]))
 
     return [
@@ -117,7 +114,7 @@ def set(names, pwr="off", hue:int=-1, sat:int=-1, bri:int=-1):
     for id in ids: lw.set_state(State(f"{id} {values}"))
 
     states_new = lw.exec(f'state', brief=False)
-    return [m.response("s-resp", f"FOR {ids}\nSET {values}\n\n{states_new}")]
+    return [m.text_big_ro("s-resp", f"FOR {ids}\nSET {values}\n\n{states_new}")]
 
 
 def create(states, name):
@@ -133,8 +130,8 @@ def edit(name):
         m.view("_body", f"edit ambient: {name}", [
             m.form(None, None, [
                 m.text("name", name, "name"),
+                m.label("ID PWR HUE SAT BRI"),
                 m.text_big("content", content, "script"),
-                _builtin(),
                 m.execute("ambients", "change", "change ambient"),
             ], table=False),
             m.form(None, None, [
@@ -142,14 +139,15 @@ def edit(name):
                 m.execute("ambients", "delete", "delete ambient"),
             ], table=False),
             m.form(None, None, [
-                m.execute("ambients", "ctl", "cancel and go back"),
-            ], table=False)])]
+                m.execute("ambients", "ctl", "go back"),
+            ], table=False),
+            m.form(None, "built-in", _builtin(), True, False)])]
 
 
 def change(name:str, content:str):
     """ Changes the ambient."""
     ami.change(name, content)
-    return ctl()
+    return edit(name)
 
 
 def delete(name:str):
@@ -173,8 +171,9 @@ def run(name):
 def _builtin():
     """ Returns the built-in variables."""
     predefined = ami.predefined()
-    builtin = "\n".join([f"{k.ljust(20)} = {predefined[k]}" for k in predefined.keys()])
-    return m.text_big_ro(builtin)
+    macros = ami.macros()
+    builtin = "\n".join([f"{k}\t=\t{predefined[k]}" for k in predefined.keys()])
+    return [m.text_big_ro('', builtin), m.text_big_ro('', macros)]
 
 
 def _name_suggestion():

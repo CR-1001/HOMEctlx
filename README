@@ -1,10 +1,10 @@
-# HomeCtl 2.0
+# HomeCtl
 HomeCtl is a lean and modular smart home system.
 
 ## Modules and Functions
 - **Files**: Share and edit files.
 - **Light**: Control your Philips Hue light system.
-- **Ambients**: Static or dynamic light settings (with a scripting language).
+- **Ambients**: Define static and dynamic scenes with a scripting language.
 - **Alarms**: Schedule alarms and timers.
 - **Telemetry**: Maintenance functions.
 

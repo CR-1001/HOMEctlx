@@ -32,7 +32,7 @@ def logs():
     logs = fa.read_file(["temp", "logs"])
     return m.form("lo", "logs", [
                 m.execute("telemetry", "delete_logs", "clean"),
-                m.response("lo-l", logs),
+                m.text_big_ro("lo-l", logs),
                 m.autoupdate("telemetry", "logs", 5000)
             ], False, False)
 
@@ -48,13 +48,13 @@ def health(execute:list):
             result = "Error during execution."
         results.append(f"{e}\n\n{result}")
     out = "\n\n".join(results)
-    return [m.response("sh-r", out)]
+    return [m.text_big_ro("sh-r", out)]
 
 
 def delete_logs():
     """ Deletes the logs."""
     fa.update_file(["temp", "logs"], f"Logs cleaned: {datetime.now()}\n", True)
-    return [m.response("lo-l", fa.read_file(["temp", "logs"]))]
+    return [m.text_big_ro("lo-l", fa.read_file(["temp", "logs"]))]
 
 
 def routines():
