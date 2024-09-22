@@ -23,13 +23,13 @@ class reqhandler:
     for m in [start, files, alarms, ambients, lights, telemetry]:
         modules[m.__name__.replace('viewmodels.', '')] = m
 
-    @cmdex_pb.route("/<vm>/<func>")
-    def control(vm:str, func:str):
+    @cmdex_pb.route("/<vm>/ctl")
+    def control(vm:str):
         """ Starting point."""
         return render_template("control.html", vm=vm)
 
 
-    @cmdex_pb.route("/<vm>/<func>/run", methods=["POST"])
+    @cmdex_pb.route("/<vm>/<func>", methods=["POST"])
     def run(vm:str, func:str):
         """ Executes a command."""
         args = request.get_json()
@@ -39,7 +39,7 @@ class reqhandler:
     def exec(vm:str, func:str, args:dict):
         """ Executes the command."""
         try:
-            if func in ['', None]: func = 'ctl'
+            if func in ['', None, 'undefined']: func = 'ctl'
             method = getattr(reqhandler.modules[vm], func)
             elements = method(**args)
             if not isinstance(elements, Iterable): elements = [elements]

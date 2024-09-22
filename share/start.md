@@ -11,4 +11,4 @@ More open source software:
 - [Debian](https://www.debian.org/)
 - [Mozilla](https://www.mozilla.org/en-US/foundation/)
 
-This can be customized. See README.
+Please [customize](/files/ctl?dir=&file=start.md&edit=True) this page.

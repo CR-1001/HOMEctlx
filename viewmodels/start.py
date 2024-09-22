@@ -10,7 +10,7 @@ import services.meta as m
 from viewmodels import markdown
 
 
-def ctl(args:dict={}) -> list[m.view]:
+def ctl() -> list[m.view]:
     """ Starting point."""
 
     forms = []

@@ -12,9 +12,9 @@ from services.lightstates import States
 import services.meta as m
 
 
-def ctl(args:dict={}) -> list[m.view]:
+def ctl() -> list[m.view]:
     """ Starting point."""
-    forms = [m.form(None, None, [
+    forms = [m.form(None, "lights", [
         m.execute("lights/all_off", "turn all off"),
         m.space(1)], True, False)]
     states = lw.states_grouped("grp")

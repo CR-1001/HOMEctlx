@@ -14,11 +14,13 @@ from flask import session
 from viewmodels import markdown
 
 
-def ctl(args:dict={}) -> list[m.view]:
+def ctl(dir:str=None, 
+        file:str=None, 
+        content:bool=None, 
+        edit:bool=None) -> list[m.view]:
     """ Starting point."""
-    # set defaults
-    if 'dir' in args: session['dir'] = args['dir']
-    return directory()
+    if file != None: return filex(file, dir, content, edit)
+    else:            return directory(dir, content, edit)
 
 
 def set_defaults():
@@ -190,15 +192,13 @@ def directory_edit_fields(files:list):
     return forms
 
 
-def file(file:str):
+def filex(file:str, dir:str=None, content:bool=None, editx:bool=None):
     """ File related actions."""
-    if file == "..": return directory()
-    return [m.view("_body", f"share: {file}", [
-        m.form("vf", "view content", [
-            m.hidden("file", file),
-            file_fields(file)
-        ], True)
-    ])]
+    if editx != None:   session['edit'] = editx in ['True', True]
+    if content != None: session['content'] = content in ['True', True]
+    if dir != None:     session['dir'] = dir
+    set_defaults()
+    return [*edit(file), m.header([_path_triggers(session['dir'])])]
 
 
 def file_fields(file:str):
@@ -225,7 +225,8 @@ def file_fields(file:str):
 
 def edit(file) -> list[m.form]:
     """ File edit commands."""
-    forms = []
+    forms = [m.form(None, None, [m.dir("files/directory", 
+        fa.sanitize([session['dir']]), "..", False, 0)], True, False)] 
 
     file_hidden = m.hidden("file", file)
 
@@ -324,27 +325,27 @@ def add_entries(file:str, lines:list=[]):
         if not fa.read_file([session['dir'], file]).endswith("\n"):
             content = f"\n{content}"
         fa.update_file([session['dir'], file], content, False)
-    return ctl({ "file": file, "dir": session['dir'] })
+    return ctl(session['dir'], file)
 
 
 def remove_entries(file:str, remove:list[str]):
     """ Remove entries."""
     if len(remove) > 0:
         fa.clean_file([session['dir'], file], lambda line: line in remove)
-    return ctl({ "file": file, "dir": session['dir'] })
+    return ctl(session['dir'], file)
 
 
 def update_file(file:str, content:list):
     """ Edit file."""
     fa.update_file([session['dir'], file], content, True)
-    return ctl({ "file": file, "dir": session['dir'] })
+    return ctl(session['dir'], file)
 
 
 def create_file(file:str, content:str):
     """ Create file."""
     if file == "": return [m.error("No file name specified.")]
     fa.create_file([session['dir'], file], content)
-    return ctl({ "file": file, "dir": session['dir'] })
+    return ctl(session['dir'], file)
 
 
 def create_directory(dir_new:str=None):

@@ -14,7 +14,7 @@ from services.lightstates import State, States
 import services.meta as m
 
 
-def ctl(args:dict={}) -> list[m.view]:
+def ctl() -> list[m.view]:
     """ Starting point."""
     
     ambients = ami.all()

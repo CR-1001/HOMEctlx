@@ -149,7 +149,7 @@ function initialize() {
 // execute a command and refresh view
 function execute(func, args) {
     // execute the command
-    fetch(`/${func}/run`, {
+    fetch(`/${func}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(args)

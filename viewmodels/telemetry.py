@@ -11,7 +11,7 @@ import services.meta as m
 import services.fileaccess as fa
 
 
-def ctl(args:dict={}) -> list[m.view]:
+def ctl() -> list[m.view]:
     """ Starting point."""
 
     commands = list(map(lambda r: m.choice(r), routines()))

@@ -12,7 +12,7 @@ from services.lightstates import States
 import services.meta as m
 
 
-def ctl(args:dict={}) -> list[m.view]:
+def ctl() -> list[m.view]:
     """ Starting point."""
 
     states_txt = lw.exec(f"state", brief=False)
