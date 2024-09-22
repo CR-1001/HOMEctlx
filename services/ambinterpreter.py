@@ -91,14 +91,14 @@ def _run(id, name, states_old:list[State]=None, changed_ids:set[str]=set(), dela
     if delay_seconds > 0:  sleep(delay_seconds)
     if states_old == None: states_old = lw.states()
     script = fa.read_file(["ambients", name])
-    script = f'{macros()}\n{script}'
-    tokens = _prepare(script)
+    tokens = prepare(script)
     if len(context) == 0: predefined(context)
     _interpret_tokens(id, tokens, states_old, changed_ids, context)
     terminate(id)
 
 
-def _prepare(template):
+def prepare(template):
+    template = f'{macros()}\n{template}'
     env = Environment(autoescape=select_autoescape())
     for m in [Common, random]: 
         _map_methods(env.globals, m)

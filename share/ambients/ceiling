@@ -1,20 +1,21 @@
-$s   = \ sleep ru(1,10)
-$m   = \ sleep ru(5,30)
-$l   = \ sleep ru(10,60)
+{% for x in range(100) %}
 
-$decke on $redish $fullish
-sleep 3
+  {% set devices = choice([[1,2], [2,3], [1,2,3]]) %}
 
-repeat 5   $decke on $fxl $fs  \ sleep 3
+    {%- if uniform(0,1) < 0.3 %} 
 
-$decke on $blueish $fullish
-sleep 3
+      {{ wheel(devices, i(uniform(0,360)), i(uniform(1,20)), 6) }}
 
-repeat 5   $decke on $fxl $fs  \ sleep 3
+    {%- else %} 
 
-$decke on $randomhue $fullish
-sleep 3
+      {% for y in range(i(uniform(1,20))) %}
 
-repeat 5   $decke on $fxl $fs  \ sleep 3
+        {{ random_with_bias(devices, i(uniform(1,10))) }} 
 
-call ceiling
+      {% endfor %}
+
+    {%- endif %}
+
+  sleep {{ i(gauss(8,1.5)) }}
+
+{% endfor %}

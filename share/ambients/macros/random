@@ -14,15 +14,15 @@
 
     {{ d }} on
 
-      {%- if   rnd_hue < 0.7 %} {{ choice(hue_bias) }} 
-      {%- elif rnd_hue < 0.8 %} $randomhue
-      {%- elif rnd_hue < 0.9 %} $fl
+      {%- if   rnd_hue < 0.4 %} {{ choice(hue_bias) }} 
+      {%- elif rnd_hue < 0.5 %} $randomhue
+      {%- elif rnd_hue < 0.6 %} $fl
       {%- else               %} $fs
       {%- endif              %}
       
-      {%- if   rnd_sat < 0.7 %} {{ choice(sat_bias) }} 
-      {%- elif rnd_sat < 0.8 %} $randomsat
-      {%- elif rnd_sat < 0.9 %} $fl
+      {%- if   rnd_sat < 0.4 %} {{ choice(sat_bias) }} 
+      {%- elif rnd_sat < 0.5 %} $randomsat
+      {%- elif rnd_sat < 0.6 %} $fl
       {%- else               %} $fs
       {%- endif              %}
 

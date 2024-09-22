@@ -122,35 +122,46 @@ def create(states, name):
     return ctl()
 
 
-def edit(name):
+def edit(name:str, tokens:str=None):
     """ Edit an ambient."""
     content = ami.single(name)
-    return [
-        m.view("_body", f"edit ambient: {name}", [
-            m.form(None, None, [
-                m.text("name", name, "name"),
-                m.text_big("content", content, "script"),
-                m.execute_params("ambients/change", "save and run", 
-                    {'run': True}),
-                m.execute_params("ambients/change", "save", 
-                    {'run': False}),
-            ], table=False),
-            m.form(None, None, [
-                m.execute("ambients/ctl", "cancel and go back"),
-                m.space(1)
-            ], table=False),
-            m.form(None, "built-in", _builtin(), True, False),
-            m.form(None, "delete", [
-                m.hidden("name", name),
-                m.execute("ambients/delete", "delete"),
-            ])])]
+    forms = [
+        m.form(None, None, [
+            m.text("name", name, "name"),
+            m.text_big("content", content, "ambiscript"),
+            m.execute_params("ambients/change", "save and validate", 
+                {'run': False, 'check': True}),
+            m.execute_params("ambients/change", "save and run", 
+                {'run': True, 'check': True}),
+        ], table=False),
+        m.form(None, None, [
+            m.execute("ambients/ctl", "cancel and go back"),
+            m.space(1)
+        ], table=False),
+        m.form(None, "built-in", _builtin(), True, False),
+        m.form(None, "delete", [
+            m.hidden("name", name),
+            m.execute("ambients/delete", "delete"),
+        ])]
+    if tokens != None:
+        forms.insert(2, m.form(None, 'validation', [
+            m.execute_params("ambients/edit", "clear and cancel", 
+                {'name': name}),
+            m.label("the ambiscript produced the following instructions:"),
+            m.text_big_ro(None, '\n'.join(tokens))]))
+
+    return [m.view("_body", f"edit ambient: {name}", forms)]
 
 
-def change(name:str, content:str, run:bool=False):
+def change(name:str, content:str, run:bool=False, check:bool=False):
     """ Changes the ambient."""
     ami.change(name, content)
+    tokens = None
     if run in ['True', True]: ami.run(name)
-    return edit(name)
+    if check in ['True', True]:
+        try: tokens = ami.prepare(content)
+        except Exception as e: tokens = e
+    return edit(name, tokens)
 
 
 def delete(name:str):
