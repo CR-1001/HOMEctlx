@@ -148,7 +148,7 @@ def edit(name:str, tokens:str=None):
             m.execute_params("ambients/edit", "clear and cancel", 
                 {'name': name}),
             m.label("the ambiscript produced the following instructions:"),
-            m.text_big_ro(None, '\n'.join(tokens))]))
+            m.text_big_ro(None, tokens)]))
 
     return [m.view("_body", f"edit ambient: {name}", forms)]
 
@@ -159,8 +159,8 @@ def change(name:str, content:str, run:bool=False, check:bool=False):
     tokens = None
     if run in ['True', True]: ami.run(name)
     if check in ['True', True]:
-        try: tokens = ami.prepare(content)
-        except Exception as e: tokens = e
+        try: tokens = '\n'.join(ami.prepare(content))
+        except Exception as e: tokens = f'{e}'
     return edit(name, tokens)
 
 
