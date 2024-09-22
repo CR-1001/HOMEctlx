@@ -138,7 +138,7 @@ def edit(name:str, tokens:str=None):
             m.execute("ambients/ctl", "cancel and go back"),
             m.space(1)
         ], table=False),
-        m.form(None, "built-in", _builtin(), True, False),
+        m.form(None, "built-in", _builtin()),
         m.form(None, "delete", [
             m.hidden("name", name),
             m.execute("ambients/delete", "delete"),
