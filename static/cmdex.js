@@ -1,4 +1,4 @@
-/* This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+/* This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
    Distributed under terms of the GPL3 license. */
 
 /*
@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
 function process(sourceElement) {
     if (document.querySelectorAll(".execute.inactive").length > 0) return;
     
-    const vm = sourceElement.dataset.vm;
     const func = sourceElement.dataset.func;
     const form = sourceElement.closest("form");
     const fieldset1 = sourceElement.closest("fieldset");
@@ -121,14 +120,14 @@ function process(sourceElement) {
 
     function waitAndExecute() {
         if (!wait) {
-            execute(vm, func, args);
+            execute(func, args);
         } else {
             // TODO: progress visualization
             setTimeout(waitAndExecute, 1000);
         }
     }
 
-    waitAndExecute(vm, func, args);
+    waitAndExecute(func, args);
 }
 
 // initialize module (extract view-model, function, and arguments from the URL)
@@ -136,8 +135,7 @@ function initialize() {
     enable(false);
 
     const parts = window.location.pathname.split('/');
-    const vm = parts[1];
-    const func = parts[2];
+    const func = `${parts[1]}/${parts[2]}`;
 
     const params = {};
     const searchParams = new URLSearchParams(window.location.search);
@@ -145,13 +143,13 @@ function initialize() {
         params[key] = value;
     });
 
-    execute(vm, func, params);
+    execute(func, params);
 }
 
 // execute a command and refresh view
-function execute(vm, func, args) {
+function execute(func, args) {
     // execute the command
-    fetch(`/${vm}/${func}/run`, {
+    fetch(`/${func}/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(args)

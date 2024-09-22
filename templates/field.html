@@ -1,4 +1,4 @@
-{# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+{# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
     Distributed under terms of the GPL3 license. #}
 
 
@@ -6,7 +6,6 @@
 
     {% if field.type() == "execute" %}
     <div
-        data-vm="{{field.vm}}"
         data-func="{{field.func}}"
         {% if field.autoupdate != 0 -%}
         data-autoupdate="{{field.autoupdate}}"
@@ -25,9 +24,7 @@
                 value="{{field.params[p]}}">
             {% endfor %}
         {% endif %}
-        <div
-            data-vm="{{field.vm}}"
-            data-func="{{field.func}}"
+        <div data-func="{{field.func}}"
             class="action execute {% if field.important %}glow-a{% endif %}">
                 [{{field.text}}]
         </div>
@@ -44,7 +41,6 @@
             {% endfor %}
         {% endif %}
         <div
-            data-vm="{{field.vm}}"
             data-func="{{field.func}}"
             data-autoupdatedelay="{{field.delay}}">
         </div>
@@ -53,9 +49,7 @@
     {% elif field.type() == "pager" and (field.st_idx != 0 or (field.st_idx+field.page_sz) < field.all_sz)%}
     <fieldset>
         <span>
-            <span>
-                page {{ ((field.st_idx / field.page_sz) + 1) | int }}
-            </span>
+            <span>page {{ ((field.st_idx / field.page_sz) + 1) | int }}</span>
             {% if field.st_idx != 0 %}
             <span class="fieldset">
                 <input
@@ -63,7 +57,6 @@
                     name="st_idx"
                     value="{{field.st_idx-field.page_sz}}">
                 <span
-                    data-vm="{{field.vm}}"
                     data-func="{{field.func}}"
                     data-container="{{field.container}}"
                     class="action execute {% if field.focus %}bring_into_view{% endif %}">
@@ -78,7 +71,6 @@
                     name="st_idx"
                     value="{{field.st_idx+field.page_sz}}">
                 <span
-                    data-vm="{{field.vm}}"
                     data-func="{{field.func}}"
                     data-container="{{field.container}}"
                     class="action execute {% if field.focus %}bring_into_view{% endif %}">
@@ -120,7 +112,6 @@
     <div>
         {% for v in field.values %}
         <div
-            data-vm="{{field.vm}}"
             data-func="{{field.func}}"
             data-param="{{field.param}}"
             data-value="{{v.value}}"
@@ -139,7 +130,6 @@
         <span>[</span>
         {% for v in field.values %}
         <span 
-            data-vm="{{field.vm}}"
             data-func="{{field.func}}"
             data-param="{{field.param}}"
             data-value="{{v.value}}"
@@ -210,7 +200,7 @@
     {% elif field.type() == "text_big_ro" %}
         {% if field.text != None %}
         <pre 
-            class="recess back-1 width-0"
+            class="recess back-1 width-0 selectable"
             readonly>{{field.text}}</pre>
         {% endif %}
 
@@ -273,7 +263,6 @@
         <span class="fieldset">
             <input type="hidden" name="dir" value="{{field.path()}}">
             <span
-                data-vm="{{field.vm}}"
                 data-func="{{field.func}}"
                 class="action execute title-2">
                     📂&nbsp;{{field.dir}}&nbsp;
@@ -295,7 +284,7 @@
             <span class="fieldset">
                 <input type="hidden" name="dir"  value="{{field.dir}}">
                 <input type="hidden" name="file" value="{{field.file}}">
-                <span data-vm="{{field.vm}}" data-func="{{field.func}}"
+                <span data-func="{{field.func}}"
                 class="action execute {% if field.important %}glow-a{% endif %}"
                 >[edit]</span>
             </span>-->

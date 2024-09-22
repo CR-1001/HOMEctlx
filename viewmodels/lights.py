@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -15,12 +15,12 @@ import services.meta as m
 def ctl(args:dict={}) -> list[m.view]:
     """ Starting point."""
     forms = [m.form(None, None, [
-        m.execute("lights", "all_off", "turn all off"),
+        m.execute("lights/all_off", "turn all off"),
         m.space(1)], True, False)]
     states = lw.states_grouped("grp")
     for grp in states:
         fields = []
-        fields.append(m.light("lights", "set", grp))
+        fields.append(m.light("lights/set", grp))
         key = f"lights-group-{grp.head.id}-{grp.head.name}"
         forms.append(m.form(key, grp.head.name, fields, grp.head.pwr == "on"))
     return [

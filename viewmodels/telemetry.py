@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -20,7 +20,7 @@ def ctl(args:dict={}) -> list[m.view]:
         m.view("_body", "telemetry", [
             m.form("sh", "server health", [
                 m.select_many("execute", commands, commands[:3]),
-                m.execute("telemetry", "health", "execute"),
+                m.execute("telemetry/health", "execute"),
                 *health(routines()[:3]),
                 m.space(2)
             ], True, True),
@@ -31,9 +31,9 @@ def ctl(args:dict={}) -> list[m.view]:
 def logs():
     logs = fa.read_file(["temp", "logs"])
     return m.form("lo", "logs", [
-                m.execute("telemetry", "delete_logs", "clean"),
+                m.execute("telemetry/delete_logs", "clean"),
                 m.text_big_ro("lo-l", logs),
-                m.autoupdate("telemetry", "logs", 5000)
+                m.autoupdate("telemetry/logs", 5000)
             ], False, False)
 
 

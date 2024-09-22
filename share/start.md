@@ -1,5 +1,5 @@
-# Welcome to HomeCtl
-Visit the [project page](https://github.com/CR-1001/HomeCtl).
+# Welcome to HOMEctlx
+Visit the [project page](https://github.com/CR-1001/HOMEctlx).
 
 # Open Source Software
 More open source software:

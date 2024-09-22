@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -17,7 +17,6 @@ import services.meta as m
 def ctl(args:dict={}) -> list[m.view]:
     """ Starting point."""
     
-    states_now_str_devs = lw.exec(f"state", brief=False).split('\n')[1:]
     ambients = ami.all()
     ambients_and_macros = ami.all(True)
 
@@ -27,24 +26,22 @@ def ctl(args:dict={}) -> list[m.view]:
     forms.append(forms_running[0])
 
     if len(ambients) > 0:
-        forms.append(m.form("a-run", "set ambient", [
-            m.triggers("ambients", "run", "name", m.choice.makelist(ambients)),
-            m.space(1)
+        forms.append(m.form("a-run", "run", [
+            m.triggers("ambients/run", "name", m.choice.makelist(ambients))
         ], True, False))
 
-    forms += forms_running[1:]
-
     if len(ambients_and_macros) > 0:
-        forms.append(m.form("a-edit", "edit ambient", [
-            m.select("name", m.choice.makelist(ambients_and_macros)),
-            m.execute("ambients", "edit", "edit")
+        forms.append(m.form("a-edit", "edit", [
+            m.triggers("ambients/edit", "name", m.choice.makelist(ambients_and_macros))
         ]))
 
     forms.append(
-        m.form("a-create", "create ambient", [
+        m.form("a-create", "create", [
             m.text("name", _name_suggestion()),
-            m.execute("ambients", "edit", "create")
+            m.execute("ambients/edit", "create"),
         ]))
+    
+    forms += forms_running[1:]
 
     return [
         m.view("_body", "ambients", forms), 
@@ -55,13 +52,13 @@ def running():
     """ Current states."""
     running = ami.running()
     if len(running) > 0:
-        field = m.triggers("ambients", "stop", "name", m.choice.makelist(running))
+        field = m.triggers("ambients/stop", "name", m.choice.makelist(running))
     else:
         field = m.label("no running ambients")
     udpate_delay = 5000 if len(running) == 0 else 2000
     return [
-        m.form("a-stop", "running ambients", 
-            [field, m.autoupdate("ambients", "running", udpate_delay)], 
+        m.form("a-stop", "running", 
+            [field, m.autoupdate("ambients/running", udpate_delay)], 
             True, False),
         *states()]
 
@@ -76,18 +73,18 @@ def states():
 
     for grp in sorted_groups:
         fields = fields_on if grp.head.pwr != "off" else fields_off
-        fields.append(m.light("ambients", "set_state", grp))
+        fields.append(m.light("ambients/set_state", grp))
 
-    if len(fields_on) == 0: fields_on.append(m.label("no devices turned on"))
+    if len(fields_on) == 0: fields_on.append(m.label("no active devices"))
 
-    if len(fields_off) == 0: fields_off.append(m.label("all devices turned on"))
+    if len(fields_off) == 0: fields_off.append(m.label("all devices active"))
     else: 
-        fields_off.insert(0, m.title("inactive devices"))
+        fields_off.insert(0, m.title("inactive"))
         fields_off.insert(0, m.space(1))
 
     fields_off.append(m.space(1))
     
-    return [m.form("a-states", "active devices", 
+    return [m.form("a-states", "active", 
         [*fields_on, *fields_off], True, False)]
 
 
@@ -133,22 +130,26 @@ def edit(name):
             m.form(None, None, [
                 m.text("name", name, "name"),
                 m.text_big("content", content, "script"),
-                m.execute("ambients", "change", "change ambient"),
+                m.execute_params("ambients/change", "save and run", 
+                    {'run': True}),
+                m.execute_params("ambients/change", "save", 
+                    {'run': False}),
             ], table=False),
             m.form(None, None, [
-                m.execute("ambients", "ctl", "go back"),
+                m.execute("ambients/ctl", "cancel and go back"),
                 m.space(1)
             ], table=False),
             m.form(None, "built-in", _builtin(), True, False),
-            m.form(None, None, [
+            m.form(None, "delete", [
                 m.hidden("name", name),
-                m.execute("ambients", "delete", "delete ambient"),
-            ], table=False)])]
+                m.execute("ambients/delete", "delete"),
+            ])])]
 
 
-def change(name:str, content:str):
+def change(name:str, content:str, run:bool=False):
     """ Changes the ambient."""
     ami.change(name, content)
+    if run in ['True', True]: ami.run(name)
     return edit(name)
 
 
@@ -179,11 +180,10 @@ def _builtin():
     builtin = "\n".join(
         [f"{k.rjust(padding)}\t= {predefined[k]}" for k in keys])
     return [
-        m.label("Base syntax:"),
-        m.label("ID PWR HUE SAT BRI"),
-        m.label("Predefined variables:"),
+        m.label("base syntax: ID PWR HUE SAT BRI"),
+        m.label("predefined variables:"),
         m.text_big_ro('', builtin),
-        m.label("Preprocessed macros:"),
+        m.label("preprocessed macros:"),
         m.text_big_ro('', macros),
         m.space(2)]
 

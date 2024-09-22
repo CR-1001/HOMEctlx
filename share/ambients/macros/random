@@ -1,22 +1,32 @@
-{% macro random_with_bias(devices, changes=10, seconds_mu=8, seconds_sigma=1.5, bias=['$redish', '$orangeish', '$yellowish', '$roseish', '$magentaish']) %}
-
-# bri not changed
+{% macro random_with_bias(
+    devices=['*'], changes=1, 
+    seconds_mu=8, seconds_sigma=1.5, 
+    hue_bias=['$redish', '$orangeish', '$yellowish', 
+      '$roseish', '$magentaish'],
+    sat_bias=['$fullish', '100']) %}
 
 {% for _ in range(changes) %}
 
-  {{ choice(devices) }} on
+  {% for d in devices %}
 
-    {%- if uniform(0,1) < 0.1   %} $randomhue 
-    {%- elif uniform(0,1) < 0.1 %} $fl
-    {%- elif uniform(0,1) < 0.5 %} $fs
-    {%- else                    %} {{ choice(bias) }} 
-    {%- endif                   %}
-    
-    {%- if uniform(0,1) < 0.1 %} $randomsat
-    {%- elif uniform(0,1) < 0.1 %} $fl
-    {%- elif uniform(0,1) < 0.5 %} $fs
-    {%- else                    %} $fullish
-    {%- endif                   %}
+    {% set rnd_hue = uniform(0,1) %}
+    {% set rnd_sat = uniform(0,1) %}
+
+    {{ d }} on
+
+      {%- if   rnd_hue < 0.7 %} {{ choice(hue_bias) }} 
+      {%- elif rnd_hue < 0.8 %} $randomhue
+      {%- elif rnd_hue < 0.9 %} $fl
+      {%- else               %} $fs
+      {%- endif              %}
+      
+      {%- if   rnd_sat < 0.7 %} {{ choice(sat_bias) }} 
+      {%- elif rnd_sat < 0.8 %} $randomsat
+      {%- elif rnd_sat < 0.9 %} $fl
+      {%- else               %} $fs
+      {%- endif              %}
+
+    {% endfor %}
 
   sleep {{ i(gauss(seconds_mu, seconds_sigma)) }}
 

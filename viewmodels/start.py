@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -25,7 +25,7 @@ def ctl(args:dict={}) -> list[m.view]:
 
     forms.append(
         m.form(None, None, [
-            markdown.for_str("# HomeCtl\nCopyright (C) 2024 Christian Rauch.\nDistributed under terms of the GPL3 license.", False)
+            markdown.for_str("# HOMEctlx\nCopyright (C) 2024 Christian Rauch.\nDistributed under terms of the GPL3 license.", False)
         ], True, False))
     
     return [m.view("_body", "", forms)]

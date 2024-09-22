@@ -1,5 +1,5 @@
-# HomeCtl
-HomeCtl is a lean and modular smart home system.
+# HOMEctlx
+HOMEctlx is a lean and modular smart home system.
 
 ## Modules and Functions
 - **Files**: Share and edit files.
@@ -14,7 +14,7 @@ HomeCtl is a lean and modular smart home system.
 - The `share` directory contains the files to be shared (and the landing page `start.md`). 
 
 ## Technical Background
-Most user interface interactions in HomeCtl are handled via a lean view-model framework. HTTP requests are managed by `services/reqhandler.py`. Received arguments are passed to the view-models in the `viewmodels` module. The view-models return metadata describing the new state of the user interface. The corresponding HTML is rendered and sent to the client. JavaScript on the client side, `cmdex.js`, collects data from input fields, calls the server, and updates the user interface.
+Most user interface interactions in HOMEctlx are handled via a lean view-model framework. HTTP requests are managed by `services/reqhandler.py`. Received arguments are passed to the view-models in the `viewmodels` module. The view-models return metadata describing the new state of the user interface. The corresponding HTML is rendered and sent to the client. JavaScript on the client side, `cmdex.js`, collects data from input fields, calls the server, and updates the user interface.
 
 
 ## Disclaimer and author

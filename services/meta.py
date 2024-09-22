@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -14,7 +14,7 @@ class uielement:
     key:str
     desc:str=None
     def type(self): return type(self).__name__
-    def haskey(self): return hasattr(self, "key") and self.key != None
+    def haskey(self): return hasattr(self, 'key') and self.key not in [None, '']
 
 
 @dataclass
@@ -42,7 +42,6 @@ class header(uielement):
 
 @dataclass
 class execute(uielement):
-    vm:str
     func:str
     text:str="execute"
     important:bool=False
@@ -51,7 +50,6 @@ class execute(uielement):
 
 @dataclass
 class execute_params(uielement):
-    vm:str
     func:str
     text:str="execute"
     params:dict=None
@@ -61,7 +59,6 @@ class execute_params(uielement):
 
 @dataclass
 class autoupdate(uielement):
-    vm:str
     func:str
     delay:int=1000
     params:dict=None
@@ -78,7 +75,6 @@ class choice(uielement):
 
 @dataclass
 class triggers(uielement):
-    vm:str
     func:str
     param:str
     values:list[choice]
@@ -87,7 +83,6 @@ class triggers(uielement):
 
 @dataclass
 class pager(uielement):
-    vm:str
     func:str
     param:str
     st_idx:int
@@ -101,7 +96,6 @@ class pager(uielement):
 
 @dataclass
 class path(uielement):
-    vm:str
     func:str
     param:str
     values:list[choice]
@@ -224,12 +218,11 @@ class space(uielement):
 
 @dataclass
 class dir(uielement):
+    func:str
     dir_parent:str
     dir:str
     readonly:bool
     files:int
-    vm:str
-    func:str
     def path(self) -> str:
         if self.dir == '..': return self.dir_parent
         return f'{self.dir_parent}/{self.dir}'
@@ -237,12 +230,11 @@ class dir(uielement):
 
 @dataclass
 class file(uielement):
+    func:str
     dir:str
     file:str
     readonly:bool
     link:str
-    vm:str
-    func:str
 
 
 @dataclass
@@ -258,7 +250,6 @@ class error(uielement):
 
 @dataclass
 class light(uielement):
-    vm:str
     func:str
     state:State
 

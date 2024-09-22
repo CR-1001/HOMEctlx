@@ -1,11 +1,11 @@
-This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch. 
+This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch. 
 Distributed under terms of the GPL3 license.
 
 # Installation
 
 ## Create a virtual environment
-Copy HomeCtl to a place like /srv and change into the directory.
-  cd /srv/HomeCtl
+Copy HOMEctlx to a place like /srv and change into the directory.
+  cd /srv/HOMEctlx
 Requires Python, pip, python3-venv.
 Create the virtual environment.
   python3 -m venv .venv
@@ -21,17 +21,17 @@ Install uWSGI using the package manager of your system.
   sudo [apt-get|dnf|...] install uwsgi-plugin-python3
 
 Run the WSGI server to test the setup so far.
-  uwsgi --ini /srv/HomeCtl/etc/homectl.uwsgi-config
+  uwsgi --ini /srv/HOMEctlx/etc/HOMEctlx.uwsgi-config
 Open localhost:5010 in a browser and check if it works. 
 Kill the process afterwards.
 
 Configure the WSGI server by creating the configuration file.
-See ./etc/homectl.uwsgi.ini. Change the value for chdir and uid.
-  sudo nano /etc/uwsgi/apps-available/homectl.ini
+See ./etc/HOMEctlx.uwsgi.ini. Change the value for chdir and uid.
+  sudo nano /etc/uwsgi/apps-available/HOMEctlx.ini
     [uwsgi]
     plugins      = python3
     socket       = 127.0.0.1:5010
-    chdir        = /srv/HomeCtl
+    chdir        = /srv/HOMEctlx
     protocol     = http
     wsgi-file    = app.py
     callable     = app
@@ -39,12 +39,12 @@ See ./etc/homectl.uwsgi.ini. Change the value for chdir and uid.
     threads      = 2
     buffer-size  = 32768
     stats        = 127.0.0.1:9191
-    virtualenv   = /srv/HomeCtl/.venv
+    virtualenv   = /srv/HOMEctlx/.venv
     http-timeout = 86400
     uid          = chris
 
 Add to enabled sites.
-  sudo ln -s /etc/uwsgi/apps-available/homectl.ini /etc/uwsgi/apps-enabled
+  sudo ln -s /etc/uwsgi/apps-available/HOMEctlx.ini /etc/uwsgi/apps-enabled
 
 Enable and (re)start.
   sudo systemctl enable uwsgi
@@ -55,7 +55,7 @@ Install Nginx using the package manager of your system.
   sudo [apt-get|dnf|...] install nginx
 
 Configure the reverse proxy by creating the configuration file.
-  sudo nano /etc/nginx/sites-available/homectl
+  sudo nano /etc/nginx/sites-available/HOMEctlx
     server {
         listen 80 default_server;
         listen [::]:80 default_server;
@@ -72,8 +72,8 @@ You might need to remove the default configuration if conflicting.
   sudo rm        /etc/nginx/sites-enabled/default
   
 Add to enabled sites and make accessible.
-  sudo ln -s     /etc/nginx/sites-available/homectl  /etc/nginx/sites-enabled/default
-  sudo chmod o+x /etc/uwsgi/apps-enabled/homectl.ini
+  sudo ln -s     /etc/nginx/sites-available/HOMEctlx  /etc/nginx/sites-enabled/default
+  sudo chmod o+x /etc/uwsgi/apps-enabled/HOMEctlx.ini
 
 Change the maximum body size to allow the upload of big files.
   sudo nano /etc/nginx/nginx.conf
@@ -98,10 +98,10 @@ Bridge address and user name have to be set.
 See lightctl --help.
 
 ## File sharing
-Files in the share directory (/srv/HomeCtl/share) are shared with everyone who has access to HomeCtl. You should enable write protection for essential files.
-  chmod -R a-w /srv/HomeCtl/share/<protected directory>
+Files in the share directory (/srv/HOMEctlx/share) are shared with everyone who has access to HOMEctlx. You should enable write protection for essential files.
+  chmod -R a-w /srv/HOMEctlx/share/<protected directory>
 You may want to verify the permission change.
-  ls -lR /srv/HomeCtl/share/<protected directory>
+  ls -lR /srv/HOMEctlx/share/<protected directory>
 The share directory can be changed in config.json.
 
 ## Remarks

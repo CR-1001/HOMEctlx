@@ -1,4 +1,4 @@
-/* This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+/* This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
    Distributed under terms of the GPL3 license. */
 
 /*

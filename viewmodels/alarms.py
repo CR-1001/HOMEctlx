@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -35,7 +35,7 @@ def ctl(args:dict={}) -> list[m.view]:
             m.select("mins", list(map(lambda i: m.choice(i), mins)),\
                 None, "minutes"),
             select_devices,
-            m.execute("alarms", "timer", "set")
+            m.execute("alarms/timer", "set")
         ]))
     
     # alarm
@@ -53,7 +53,7 @@ def ctl(args:dict={}) -> list[m.view]:
                 list(map(lambda i: m.choice(i), minutes)), 
                 m.choice(minute), "minute"),
             select_devices,
-            m.execute("alarms", "alarmhm", "set")
+            m.execute("alarms/alarmhm", "set")
         ]))
     
     return [m.view("_body", "timer and alarm", forms)]
@@ -92,10 +92,10 @@ def timer(mins:int, devices:list[str]):
 
 
 def scheduled(stop:str=None):
-    """ scheduleds a running timer."""
+    """ Schedules a timer."""
     if stop != None: sd.terminate(stop)
     running = list(map(lambda r: m.choice(r), sd.running()))
-    scheduled = m.triggers("alarms", "scheduled", "stop", running)\
+    scheduled = m.triggers("alarms/scheduled", "stop", running)\
         if len(running) > 0 else m.label("nothing scheduled")
     return [m.form("scheduled", "running alarms and timers", [
         scheduled], True)]

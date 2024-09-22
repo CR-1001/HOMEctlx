@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -52,17 +52,17 @@ def directory(
     form_dir = m.form(None, None, [], True, False)
 
     # menu
-    show_menu = m.execute_params(
-        "files", "directory", f"{'hide' if session['edit'] else 'show'} menu",
+    show_menu = m.execute_params("files/directory", 
+        f"{'hide' if session['edit'] else 'show'} menu",
         { "content": session['content'] })
     show_menu.params['edit'] = not session['edit']
     form_dir.fields.append(show_menu)
         
     # content
     if len(files) > 0:
-        show_media = m.execute_params(
-            "files", "directory", f"{'hide' if session['content'] else 'show'} media",
-            { "edit": session['edit'] })
+        show_media = m.execute_params("files/directory", 
+        f"{'hide' if session['content'] else 'show'} media",
+        { "edit": session['edit'] })
         show_media.params['content'] = not session['content']
         form_dir.fields.append(show_media)
         
@@ -76,7 +76,8 @@ def directory(
     if len(dirs) > 0 or session['dir'] != '/':
         dirs_content = []
         if session['dir'] != '/':
-            dirs_content.append(m.dir(fa.sanitize([session['dir'], '..']), "..", False, 0, "files", "directory"))
+            dirs_content.append(m.dir("files/directory",
+                fa.sanitize([session['dir'], '..']), "..", False, 0))
         for d in dirs:
             if session['edit']:
                 meta = fa.read_directory_meta_data([session['dir'], d])
@@ -85,7 +86,8 @@ def directory(
             else:
                 locked = False
                 cnt = 0
-            dirs_content.append(m.dir(session['dir'], d, locked, cnt, "files", "directory"))
+            dirs_content.append(m.dir("files/directory",
+                session['dir'], d, locked, cnt))
         forms.append(m.form("d", "directories", dirs_content, True))
 
     # list files
@@ -103,8 +105,7 @@ def directory_files(st_idx:int):
     files = files[session['st_idx']:session['st_idx']+page_sz]
     forms = list()
     if len(files) > 0:
-        pager_top = m.pager(
-            "files", "directory_files", "st_idx", 
+        pager_top = m.pager("files/directory_files", "st_idx", 
             session['st_idx'], page_sz, files_sz, "f", False)
         files_content = []
         if session['edit'] or session['content']:
@@ -129,7 +130,7 @@ def directory_edit_fields(files:list):
     form_ulfile = m.form(None, "upload file", [
             m.upload("upload", "select local files:"),
             m.text("rename", "", "rename (optional):"),
-            m.execute("files", "upload_file", "upload files")
+            m.execute("files/upload_file", "upload files")
         ])
     forms.append(form_ulfile)
 
@@ -137,7 +138,7 @@ def directory_edit_fields(files:list):
     form_mkfile = m.form(None, "create file", [
             m.text("file", "new", "name:"),
             m.text_big("content", "", "content:"),
-            m.execute("files", "create_file", "create text file")
+            m.execute("files/create_file", "create text file")
         ])
     forms.append(form_mkfile)
 
@@ -145,14 +146,14 @@ def directory_edit_fields(files:list):
         # delete file
         form_mvfile = m.form(None, "delete file", [
                 m.select("file", files_choices, None, "file:"),
-                m.execute("files", "delete_file", "delete file")
+                m.execute("files/delete_file", "delete file")
             ])
         forms.append(form_mvfile)
 
         # edit file
         form_mkfile = m.form(None, "edit file", [
             m.select("file", files_choices, None, "file:"),
-            m.execute("files", "edit", "edit file")
+            m.execute("files/edit", "edit file")
         ])
         forms.append(form_mkfile)
 
@@ -160,27 +161,27 @@ def directory_edit_fields(files:list):
         form_mvfile = m.form(None, "move file", [
                 m.select("file", files_choices, None, "old:"),
                 m.text("file_new", "", "new:"),
-                m.execute("files", "move_file", "move file")
+                m.execute("files/move_file", "move file")
             ])
         forms.append(form_mvfile)
 
     # create directory
     form_mkdir = m.form(None, "create directory", [
             m.text("dir_new", "new", "name:"),
-            m.execute("files", "create_directory", "create sub directory")
+            m.execute("files/create_directory", "create sub directory")
         ])
     forms.append(form_mkdir)
 
     # delete directory
     form_rmdir = m.form(None, "delete directory", [
-        m.execute("files", "delete_directory", "delete current directory")
+        m.execute("files/delete_directory", "delete current directory")
     ])
     forms.append(form_rmdir)
 
     # move directory
     form_mvdir = m.form(None, "move directory", [
             m.text("dir_new", session['dir'], "new:"),
-            m.execute("files", "move_directory", "move or rename directory")
+            m.execute("files/move_directory", "move or rename directory")
         ])
     forms.append(form_mvdir)
     
@@ -207,8 +208,8 @@ def file_fields(file:str):
     if session['edit'] or session['content']:
         meta = fa.read_file_meta_data([session['dir'], file])
     locked = session['edit'] and meta["readonly"]
-    fields.append(m.file(
-        session['dir'], file, locked, link, "files", "edit"))
+    fields.append(m.file("files/edit",
+        session['dir'], file, locked, link))
     if session['content']:
         if not meta["is_text"]:
             if   meta["is_image"]:    fields.append(m.media(link, "image"))
@@ -217,7 +218,7 @@ def file_fields(file:str):
             elif meta["is_markdown"]: fields.append(markdown.for_file(session['dir'], file))
         else:
             text = fa.read_file([session['dir'], file])
-            fields.append('', m.text_big_ro('', text))
+            fields.append(m.text_big_ro('', text))
         fields.append(m.space(1))
     return fields
 
@@ -252,7 +253,7 @@ def edit(file) -> list[m.form]:
             m.form("uf", "edit content", [
                 file_hidden,
                 m.text_big("content", content),
-                m.execute("files", "update_file", "overwrite")
+                m.execute("files/update_file", "overwrite")
             ]))
         
         has_remove_and_import = not meta["is_markdown"] \
@@ -266,7 +267,7 @@ def edit(file) -> list[m.form]:
                 m.form("rl", "remove entries", [
                     file_hidden,
                     m.select_many("remove", m.choice.makelist(lines), []),
-                    m.execute("files", "remove_entries", "remove")
+                    m.execute("files/remove_entries", "remove")
                 ]))
             
             files, _       = fa.list_share_files([session['dir']], True)
@@ -281,7 +282,7 @@ def edit(file) -> list[m.form]:
                     m.form("t", "import entries", [
                         file_hidden,
                         m.select_many("templates", m.choice.makelist(files), []),
-                        m.execute("files", "template"),
+                        m.execute("files/template"),
                     ]))
             
     if not fa.is_essential([session['dir'], file]):
@@ -289,12 +290,12 @@ def edit(file) -> list[m.form]:
             m.form("mf", "move file", [
                 file_hidden,
                 m.text("file_new", file),
-                m.execute("files", "move_file", "move")
+                m.execute("files/move_file", "move")
             ]))
         forms.append(
             m.form("df", "delete file", [
                 file_hidden,
-                m.execute("files", "delete_file", "delete")
+                m.execute("files/delete_file", "delete")
             ]))
             
     return [m.view("_body", f"share: {file}", forms)]
@@ -310,7 +311,7 @@ def template(file:str, templates:list[str]):
             "ae", "add entries", [
                 m.hidden("file", file),
                 m.select_many("lines", lines, []),
-                m.execute("files", "add_entries", "append")
+                m.execute("files/add_entries", "append")
             ], True)
     ]
     return [m.view("_body", f"share: {file}", forms)]
@@ -395,7 +396,7 @@ def upload_file(rename:str, upload):
     return directory()
 
 
-def _path_triggers(path:str) -> m.triggers:
+def _path_triggers(path:str) -> m.path:
     """ Returns the path parts as triggers for navigation."""
     parts = [p for p in path.split("/") if p != ""]
     link = ''
@@ -405,4 +406,4 @@ def _path_triggers(path:str) -> m.triggers:
         link = fa.sanitize([link, p])
         choice = m.choice(link, f'/ {p}')
         choices.append(choice)
-    return m.path("files", "directory", "dir", choices)
+    return m.path("files/directory", "dir", choices)

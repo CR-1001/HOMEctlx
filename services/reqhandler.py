@@ -1,4 +1,4 @@
-# This file is part of HomeCtl. Copyright (C) 2024 Christian Rauch.
+# This file is part of HOMEctlx. Copyright (C) 2024 Christian Rauch.
 # Distributed under terms of the GPL3 license.
 
 """
@@ -56,14 +56,12 @@ class reqhandler:
             if not "_error" in payload:
                 payload["_error"] = render_template(\
                     f"field.html", field=m.error())
-            return jsonify(payload)
         
         except Exception as e:
-            return jsonify(
-            {
-                "_error": render_template(\
-                    "field.html", field=m.error(str(e)))
-            })
+            payload = {"_error": render_template(\
+                "field.html", field=m.error(str(e))) }
+            
+        return jsonify(payload) 
     
 
     @cmdex_pb.route("/files/share/<path:file>")
