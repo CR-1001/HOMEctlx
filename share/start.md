@@ -1,4 +1,4 @@
-# Welcome to HOMEctlx
+# Welcome
 Visit the [project page](https://github.com/CR-1001/HOMEctlx).
 
 # Open Source Software
@@ -10,3 +10,5 @@ More open source software:
 - [Linux Foundation](https://www.linuxfoundation.org/)
 - [Debian](https://www.debian.org/)
 - [Mozilla](https://www.mozilla.org/en-US/foundation/)
+
+This can be customized. See README.
