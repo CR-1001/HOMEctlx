@@ -34,7 +34,7 @@ def init(fileaccess, lightctlwrapper):
 
 def all(include_macros:bool=False):
     """ Lists the ambients."""
-    ambients, _ = fa.list_share_files(["ambients"], True)
+    ambients, _ = fa.list_files(["ambients"], True)
     if not include_macros:
         ambients = [a for a in ambients if not a.startswith('macros/')]
     return ambients
@@ -373,7 +373,7 @@ def predefined(variables:dict={}) -> dict:
 
 def macros() -> str:
     macros = ''
-    macro_files, _ = fa.list_share_files(['ambients', 'macros'])
+    macro_files, _ = fa.list_files(['ambients', 'macros'])
     for m in macro_files:
         path = fa.sanitize(['ambients', 'macros', m])
         macro = fa.read_file([path])

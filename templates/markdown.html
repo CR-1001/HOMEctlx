@@ -1,0 +1,28 @@
+{% if field.summary not in [None, ''] %}
+<details>
+    <summary>{{field.summary}}</summary>
+{% endif %}
+    <div class="md-back{% if field.recess %} recess back-2{% endif %} {{field.style}}">
+        {% for v in field.content %}
+            {%- if v.type() == "title" -%}
+            <span class="glow-a md-header md-header-{{v.order}} {{v.style}}">{{v.text}}</span>
+
+            {%- elif v.type() == "link" -%}
+            <a class="action glow-a {{v.style}}" href="{{v.link}}"
+                {%- if not v.link.startswith('/') %} target="_blank"{% endif -%}
+                >{{v.text}}</a>
+
+            {%- elif v.type() == "space" -%}
+                {%- for v in range(v.rows) -%}
+                <br class="{{v.style}}">
+                {%- endfor -%}
+        
+            {%- else -%}
+            <span class="info {{v.style}}">{{v.text}}</span>
+
+            {%- endif -%}
+        {% endfor %}
+    </div>
+{% if field.summary not in [None, ''] %}
+</details>
+{% endif %}

@@ -60,7 +60,7 @@ def sanitize(parts:list[str]) -> str:
     return f'/{path}'
 
 
-def list_share_files(path:list[str], include_subdirs=False) \
+def list_files(path:list[str], include_subdirs=False) \
     -> tuple[list[str], list[str]]:
     """ Gets all files (no files with a dot prefix)."""
     return _list_files(Path(share_path(path)), include_subdirs)
@@ -92,7 +92,7 @@ def clean_lines(content:str) -> list[str]:
 
 def create_file(path:list[str], content):
     """ Creates a file."""
-    if isinstance(content, str):     mode = "w"
+    if   isinstance(content, str):   mode = "w"
     elif isinstance(content, bytes): mode = "wb"
     else: 
         log.error(f"Illegal content type: {path}")

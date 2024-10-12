@@ -47,7 +47,7 @@ def directory(
     if st_idx != None:  session['st_idx'] = max(int(st_idx), 0)
     set_defaults()
 
-    files, dirs  = fa.list_share_files([session['dir']])
+    files, dirs  = fa.list_files([session['dir']])
 
     forms = []
 
@@ -100,7 +100,7 @@ def directory(
 
 
 def directory_files(st_idx:int):
-    files, dirs  = fa.list_share_files([session['dir']])
+    files, dirs  = fa.list_files([session['dir']])
     session['st_idx'] = max(int(st_idx), 0)
     page_sz = 10
     files_sz = len(files)
@@ -230,7 +230,7 @@ def edit(file) -> list[m.form]:
 
     file_hidden = m.hidden("file", file)
 
-    files, _ = fa.list_share_files([session['dir']])
+    files, _ = fa.list_files([session['dir']])
     link = fa.sanitize([session['dir'], file])
     download = m.download(link)
 
@@ -271,7 +271,7 @@ def edit(file) -> list[m.form]:
                     m.execute("files/remove_entries", "remove")
                 ]))
             
-            files, _       = fa.list_share_files([session['dir']], True)
+            files, _       = fa.list_files([session['dir']], True)
             files          = [f for f in files \
                 if f != file and fa.read_file_meta_data([session['dir'], f])["is_text"]]
             files_template = [f for f in files if f.startswith("template/")]

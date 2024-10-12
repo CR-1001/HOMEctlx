@@ -30,7 +30,8 @@ def for_str(content:str, recess:bool=True) -> m.uielement:
                 replace = f"[{link[0]}]({link[1]})"
                 index = line.find(replace, prev_idx)
                 if index != -1:
-                    fields.append(m.label(line[prev_idx:index]))
+                    if prev_idx != index:
+                        fields.append(m.label(line[prev_idx:index]))
                     fields.append(m.link(link[1].strip(), link[0].strip()))
                     prev_idx = index + len(replace)
             

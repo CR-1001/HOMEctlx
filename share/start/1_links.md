@@ -1,6 +1,3 @@
-# Welcome
-Visit the [project page](https://github.com/CR-1001/HOMEctlx).
-
 # Open Source Software
 More open source software:
 - [Free Software Foundation](https://www.fsf.org/)
@@ -11,4 +8,6 @@ More open source software:
 - [Debian](https://www.debian.org/)
 - [Mozilla](https://www.mozilla.org/en-US/foundation/)
 
-Please [customize](/files/ctl?dir=&file=start.md&edit=True) this page.
+# News
+- [United Nations](https://www.un.org/en/news)
+- [World Health Organization](https://www.who.int/news)

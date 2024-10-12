@@ -13,6 +13,7 @@ from services.lightstates import State
 class uielement:
     key:str
     desc:str=None
+    style:str=''
     def type(self): return type(self).__name__
     def haskey(self): return hasattr(self, 'key') and self.key not in [None, '']
 
@@ -186,18 +187,23 @@ class media(uielement):
 class link(uielement):
     link:str
     text:str
+    style:str=''
 
 
 @dataclass
 class applink(uielement):
     link:str
     text:str
+    prefix:str='open'
+    style:str=''
 
 
 @dataclass
 class markdown(uielement):
     content:list
     recess:bool=True
+    summary:str=None
+    path:str=None
 
 
 @dataclass
@@ -209,6 +215,7 @@ class title(uielement):
 @dataclass
 class label(uielement):
     text:str
+    style:str=''
 
 
 @dataclass

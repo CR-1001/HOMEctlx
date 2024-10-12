@@ -2,7 +2,8 @@
     Distributed under terms of the GPL3 license. #}
 
 
-<div class="vspace-1" {% if field.haskey() %}id="{{field.key}}"{% endif %}>
+<div class="vspace-1 {{field.style}}" 
+    {%- if field.haskey() %}id="{{field.key}}"{% endif %}>
 
     {% if field.type() == "execute" %}
     <div
@@ -292,32 +293,12 @@
     </div>
 
     {% elif field.type() == "applink" %}
-    <span class="info">open </span>
+    <span class="info">{{field.prefix}}</span>
     <a  class="action glow-a" href="{{field.link}}">
-        [&nbsp;{{field.text}}&nbsp;]</a>
+        &nbsp;[&nbsp;{{field.text}}&nbsp;]&nbsp;</a>
 
     {% elif field.type() == "markdown" %}
-    <div class="md-back{% if field.recess %} recess back-2{% endif %}">
-        {% for v in field.content %}
-            {%- if v.type() == "title" -%}
-            <span class="glow-a md-header md-header-{{v.order}}">{{v.text}}</span>
-
-            {%- elif v.type() == "link" -%}
-            <a class="action glow-a" href="{{v.link}}"
-                {%- if not v.link.startswith('/') %} target="_blank"{% endif -%}
-                >{{v.text}}</a>
-
-            {%- elif v.type() == "space" -%}
-                {%- for v in range(v.rows) -%}
-                <br>
-                {%- endfor -%}
-        
-            {%- else -%}
-            <span class="info">{{v.text}}</span>
-
-            {%- endif -%}
-        {% endfor %}
-    </div>
+    {% include 'markdown.html' %}
 
     {% elif field.type() == "light" %}
     {% include 'light.html' %}

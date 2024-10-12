@@ -429,6 +429,10 @@ select, button {
     font-weight: bold;
 }
 
+.small {
+    font-size: 0.7em;
+}
+
 .hidden {
     display: none;
 }
