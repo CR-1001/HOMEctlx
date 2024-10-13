@@ -216,6 +216,7 @@ class title(uielement):
 class label(uielement):
     text:str
     style:str=''
+    key:str=None
 
 
 @dataclass

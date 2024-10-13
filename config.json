@@ -2,5 +2,23 @@
     "lightctl_exec": "/usr/bin/lightctl --bridge=192.168.0.206 --user=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "lightctl_exec_dev": "/home/chris/Documents/Research/Cpp/LightCtl/src/lightctl --bridge=192.168.0.206 --user=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "lightctl_exec_test": "./test/lightctl-test.sh",
-    "share_dir": "share"
+    "share_dir": "share",
+    "routines": {
+        "calendar": {
+            "command": "date +'%B %d, %Y' && echo && cal",
+            "exec": {
+                "auto": true,
+                "manual": false
+            }
+        },
+        "synchronize": {
+            "command": "cd share && git pull && git add . && git commit -m 'auto-sync' && git push",
+            "desc": "Synchronize files. This may take some time.",
+            "exec": {
+                "init": true,
+                "auto": false,
+                "manual": true
+            }
+        }
+    }
 }

@@ -2,8 +2,7 @@
 # Distributed under terms of the GPL3 license.
 
 """
-Generic processing of view-model meta data. Renders the HTML and receives 
-the client calls.
+The request handler receives requests and passes parameters to the view-models. The UI meta-data returned is used to render HTML.
 """
 
 from collections.abc import Iterable

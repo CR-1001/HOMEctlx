@@ -13,6 +13,7 @@ from flask import Flask, redirect, url_for
 import services.fileaccess as fa
 import services.lightctlwrapper as lw
 import services.ambinterpreter as ami
+import services.routines as rou
 import services.scheduler as sch
 from services.reqhandler import cmdex_pb
 
@@ -44,6 +45,7 @@ def create_app(app):
     lw.init(app.config["lightctl_exec"])
     sch.init(fa)
     ami.init(fa, lw)
+    rou.init(app.config["routines"])
     
     app.register_blueprint(cmdex_pb)
 

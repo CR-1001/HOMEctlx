@@ -255,7 +255,7 @@ def edit(file) -> list[m.form]:
                 file_hidden,
                 m.text_big("content", content),
                 m.execute("files/update_file", "overwrite")
-            ]))
+            ], True))
         
         has_remove_and_import = not meta["is_markdown"] \
             and not fa.is_essential([session['dir'], file])

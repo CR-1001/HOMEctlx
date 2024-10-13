@@ -130,7 +130,7 @@ textarea {
 }
 
 .width-1 {
-    width: 14em;
+    min-width: 37em;
 }
 
 .label {
@@ -217,22 +217,22 @@ textarea {
 
 .back-0 {
     border-radius: 0.5em;
-    background-color: rgb(30, 30, 30);
+    background-color: rgba(30, 30, 30, 0.98);
 }
 
 .back-1 {
     border-radius: 0.5em;
-    background-color: rgb(40, 40, 40);
+    background-color: rgba(40, 40, 40, 0.98);
 }
 
 .back-2 {
     border-radius: 0.5em;
-    background-color: rgb(50, 50, 50);
+    background-color: rgba(50, 50, 50, 0.3);
 }
 
 .back-3 {
     border-radius: 0.5em;
-    background-color: rgb(60, 60, 60);
+    background-color: rgba(60, 60, 60, 0.3);
 }
 
 .bottom-sticky {

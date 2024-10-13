@@ -2,7 +2,7 @@
 <details>
     <summary>{{field.summary}}</summary>
 {% endif %}
-    <div class="md-back{% if field.recess %} recess back-2{% endif %} {{field.style}}">
+    <div class="md-back width-1{% if field.recess %} recess back-2{% endif %} {{field.style}}">
         {% for v in field.content %}
             {%- if v.type() == "title" -%}
             <span class="glow-a md-header md-header-{{v.order}} {{v.style}}">{{v.text}}</span>
