@@ -7,8 +7,8 @@ Interprets ambiscript and sets device states.
 
 from ast import Module
 from functools import partial
-from jinja2 import Environment, nodes, select_autoescape
-from datetime import datetime
+from jinja2 import Environment, select_autoescape
+from datetime import datetime, timedelta
 import logging
 import random
 import re
@@ -20,16 +20,14 @@ from services.lightstates import State
 log = logging.getLogger(__file__)
 
 
-def init(fileaccess, lightctlwrapper):
+def init(fileaccess, dbaccess, lightctlwrapper):
     """ Sets fileaccess and lightctlwrapper."""
     global lw
-    global fa 
+    global fa
+    global dba
     lw = lightctlwrapper
     fa = fileaccess
-    tasks = running()
-    if len(tasks) > 0: log.warning(\
-        f"Incomplete running ambients deleted: {', '.join(tasks)}")
-    fa.clean_file(["temp", "running-ambients"], lambda _: True)
+    dba = dbaccess
 
 
 def all(include_macros:bool=False):
@@ -39,8 +37,9 @@ def all(include_macros:bool=False):
         ambients = [a for a in ambients if not a.startswith('macros/')]
     return ambients
 
+
 def single(name):
-    """ Returns a single ambient."""
+    """ Reads an ambient."""
     return fa.read_file(["ambients", name])
 
 
@@ -61,43 +60,45 @@ def delete(name):
 
 def running() -> list[str]:
     """ Returns the currently running ambients."""
-    return fa.clean_lines(
-        fa.read_file(["temp", "running-ambients"]))
-
-
-def terminate(id:str):
-    """ Removes the running ambient from the list (either to stop it or 
-    because it has regularly finished.)"""
-    id = id.strip("\n")
-    fa.clean_file(["temp", "running-ambients"], lambda l: l == id)
+    return dba.get_tasks(['running'], ['ambient'])
 
 
 def terminated(id:str):
     """ Checks whether an ambient was terminated."""
-    id = id.strip("\n")
-    return id not in running()
+    return dba.get_task_state(int(id)) != 'running'
+
+
+def terminate(id:str):
+    """ Checks whether an ambient was terminated."""
+    return dba.clear_tasks([int(id)])
 
 
 def run(name):
     """ Restores an ambient."""
-    started = str(datetime.now().strftime("%Y-%m-%d %H:%M"))
-    id = f"{name} / started: {started}\n"
-    fa.update_file(["temp", "running-ambients"], id, False)
+    id = dba.add_task('ambient', name, 'running')
     Thread(target=_run, args=[id, name]).start()
 
 
-def _run(id, name, states_old:list[State]=None, changed_ids:set[str]=set(), delay_seconds:int=0, context:dict={}):
+def _run(
+    id,
+    name,
+    states_old:list[State]=None,
+    changed_ids:set[str]=set(),
+    delay_seconds:int=0,
+    context:dict={}):
     """ Restores an ambient by processing line for line."""
     if delay_seconds > 0:  sleep(delay_seconds)
+    context['time'] = datetime.now()
     if states_old == None: states_old = lw.states()
     script = fa.read_file(["ambients", name])
     tokens = prepare(script)
-    if len(context) == 0: predefined(context)
+    if len(context) == 1: predefined(context)
     _interpret_tokens(id, tokens, states_old, changed_ids, context)
-    terminate(id)
+    dba.clear_tasks([id])
 
 
 def prepare(template):
+    """ Prepare templates."""
     template = f'{macros()}\n{template}'
     env = Environment(autoescape=select_autoescape())
     for m in [Common, random]: 
@@ -115,6 +116,7 @@ def prepare(template):
 
 
 def _map_methods(mappings:dict, module:Module) -> dict:
+    """ Maps the methods."""
     methods = [m for m in dir(module) \
         if callable(getattr(module, m)) and not m.startswith('_')]
     for m in methods:
@@ -123,6 +125,7 @@ def _map_methods(mappings:dict, module:Module) -> dict:
 
 
 def _invoke(cast, module, method, *args, **kwargs):
+    """ Calls a method."""
     method = getattr(module, method)
     value = method(*args, **kwargs)
     if cast != None: value = cast(value)
@@ -130,12 +133,18 @@ def _invoke(cast, module, method, *args, **kwargs):
 
 
 class Common:
+    """ Common conversions."""
     def s(value) -> str:   return str(value)
     def i(value) -> int:   return int(value)
     def f(value) -> float: return float(value)
 
 
-def _interpret_tokens(id:str, tokens:list[str], states_old:list[State], changed_ids:set[str], context:dict={}):
+def _interpret_tokens(
+    id:str,
+    tokens:list[str],
+    states_old:list[State],
+    changed_ids:set[str],
+    context:dict={}):
     """ Interprets the script."""
     for token in tokens:
         if terminated(id): 
@@ -150,7 +159,12 @@ def _interpret_tokens(id:str, tokens:list[str], states_old:list[State], changed_
         _interpret_token(id, token, states_old, changed_ids, context)
 
 
-def _interpret_token(id:str, token:str, states_old:list[State], changed_ids:set[str], context:dict={}):
+def _interpret_token(
+    id:str,
+    token:str,
+    states_old:list[State],
+    changed_ids:set[str],
+    context:dict={}):
         """ Interprets a single token."""
         log.debug(token)
         # check if terminated
@@ -180,7 +194,8 @@ def _interpret_token(id:str, token:str, states_old:list[State], changed_ids:set[
                 _interpret_token(id, part.strip(), states_old, changed_ids, context)
             return
         # sleep
-        elif token.startswith("sleep"): _sleep(token)
+        elif token.startswith("sleep"): _sleep(token, context)
+        elif token.startswith("wait"):  _wait(token, context)
         # reset
         elif token.startswith("reset"):
             lw.set_states(states_old, changed_ids)
@@ -285,11 +300,35 @@ def _interpolate_value(val:str, attr:str=None, state:State=None) -> str:
     raise Exception(f"'{val}' ({attr}) cannot be processed")
 
 
-def _sleep(timeout:str):
+def _sleep(timeout:str, context:dict):
     """ Pause execution."""
-    time = _interpolate_value(timeout.partition(" ")[2], "sleep", None)
-    time = int(time)
-    sleep(time)
+    pause = _interpolate_value(timeout.partition(" ")[2], "sleep", None)
+    pause = int(pause)
+    time_old = context['time']
+    time_new = time_old + timedelta(milliseconds=pause*1000)
+    pause_delta = (time_new - datetime.now()).total_seconds()
+    if pause_delta > 0: sleep(pause_delta)
+    log.debug(f"{time_old} - sleep {pause_delta} - {time_new}")
+    context['time'] = time_new
+
+
+from datetime import datetime, timedelta
+from time import sleep
+
+def _wait(timeout: str, context: dict):
+    """Schedule execution."""
+    pause = timeout.partition(" ")[2]
+    now = datetime.now()
+    if '-' in pause:
+        new = datetime.strptime(pause, "%Y-%m-%d %H:%M")
+    else:
+        new = datetime.combine(
+            now.date(), datetime.strptime(pause, "%H:%M").time())
+        if new < now: new += timedelta(days=1)
+    delta = new - now
+    delta_seconds = delta.total_seconds()
+    if delta_seconds > 0: sleep(delta_seconds)
+    context['time'] = new
 
 
 def predefined(variables:dict={}) -> dict:
@@ -372,6 +411,7 @@ def predefined(variables:dict={}) -> dict:
 
 
 def macros() -> str:
+    """ Returns the macros."""
     macros = ''
     macro_files, _ = fa.list_files(['ambients', 'macros'])
     for m in macro_files:

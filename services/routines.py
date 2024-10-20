@@ -41,8 +41,10 @@ def exec(key:str):
         result = subprocess.run(
             command, capture_output=True, text=True, shell=True)
         out = result.stdout.strip()
-        if not cmd["exec"]["auto"]:
-            log.info(f"Executed:\n{command}\nResult:\n{out}")
+        err = result.stderr.strip()
+        if err not in ['', None] and out in ['', None]:
+            log.warning(f"Executed:\n{command}\nResult:\n{out}")
+            return err
         return out
     except Exception as e:
         log.error(e)

@@ -212,6 +212,15 @@
         name="{{field.param}}"
         value="{{field.value}}">
 
+    {% elif field.type() == "time" %}
+    <input 
+        class="recess back-3"
+        type="time"
+        min="00:00" 
+        max="23:59"
+        name="{{field.param}}"
+        value="{{field.value}}">
+
     {% elif field.type() == "hidden" %}
     <input
         type="hidden"
@@ -269,7 +278,8 @@
                     📂&nbsp;{{field.dir}}&nbsp;
                     {%- if field.readonly %}🔒&nbsp;{% endif -%}
                     {%- if field.files != 0 -%}
-                        <span class="inactive">{{field.files}}&nbsp;entries</span>
+                        <span class="inactive small">
+                            {{-field.files}}&nbsp;entries</span>
                     {%- endif %}
             </span>
         </span>

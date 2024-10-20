@@ -32,6 +32,7 @@ class form(uielement):
     fields:list
     open:bool=False
     table:bool=True
+    style:str=''
 
 
 @dataclass
@@ -118,6 +119,13 @@ class hidden(input):
 class integer(input):
     param:str
     value:int
+
+
+@dataclass
+class time(input):
+    param:str
+    value:str
+    desc:str
 
 
 @dataclass

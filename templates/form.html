@@ -3,7 +3,7 @@
 
 
 {% if form.table == True %}
-<details class="section"
+<details class="section {{form.style}}"
 {% if form.haskey() %}id="{{form.key}}"{% endif %} 
 {% if form.open %}open{% endif %}>
 
@@ -44,7 +44,7 @@
 </details>
 
 {% else %}
-<div id="{{form.key}}" class="section">
+<div id="{{form.key}}" class="section {{form.style}}">
     {% if form.name not in [None, ""] %}
         <p class="title-2 glow-a">{{form.name}}</p>
     {% endif %}

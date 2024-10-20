@@ -12,12 +12,19 @@
             }
         },
         "synchronize": {
-            "command": "cd share && git pull && git add . && git commit -m 'auto-sync' && git push",
+            "command": "eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/id_XXXXXX_github && cd share && git pull && git add . && git commit -m 'auto-sync' && git push",
             "desc": "Synchronize files. This may take some time.",
             "exec": {
                 "init": true,
                 "auto": false,
                 "manual": true
+            }
+        },
+        "weather": {
+            "command": "curl wttr.in/Mainz?TdAF",
+            "exec": {
+                "auto": true,
+                "manual": false
             }
         }
     }

@@ -7,7 +7,6 @@ View-model for lights.
 
 from datetime import datetime, timedelta
 import services.lightctlwrapper as lw
-import services.scheduler as sd
 from services.lightstates import States
 import services.meta as m
 

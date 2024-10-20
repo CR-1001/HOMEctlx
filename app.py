@@ -8,9 +8,10 @@ Application entry point.
 import json
 import logging
 import secrets
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect
 
 import services.fileaccess as fa
+import services.dbaccess as dba
 import services.lightctlwrapper as lw
 import services.ambinterpreter as ami
 import services.routines as rou
@@ -42,9 +43,10 @@ def create_app(app):
             logging.StreamHandler()
         ])
     
+    dba.init()
     lw.init(app.config["lightctl_exec"])
-    sch.init(fa)
-    ami.init(fa, lw)
+    sch.init(dba)
+    ami.init(fa, dba, lw)
     rou.init(app.config["routines"])
     
     app.register_blueprint(cmdex_pb)
@@ -55,6 +57,19 @@ def create_app(app):
     log.warning("System initialized.")
 
     return app
+
+
+@app.teardown_request
+def after_request(exception):
+    """ Free resources after the request."""
+    dba.close_cached()
+    if exception != None: log.error(e)
+
+
+@app.before_request
+def before_request():
+    """ Acquire resources before the request."""
+    dba.connect_cached()
 
 
 create_app(app)

@@ -31,40 +31,27 @@ def ctl() -> list[m.view]:
     # timer
     mins = [*range(1, 20, 1), *range(20, 60, 5), *range(60, 241, 10)]
     forms.append(
-        m.form("timer", "set timer", [
-            m.select("mins", list(map(lambda i: m.choice(i), mins)),\
-                None, "minutes"),
+        m.form("timer", "set", [
             select_devices,
-            m.execute("alarms/timer", "set")
-        ]))
+            m.space(2),
+            m.select("minutes", list(map(lambda i: m.choice(i), mins)), None, "set timer (minutes)"),
+            m.execute_params("alarms/set", "set", {"method" : "timer"}),
+            m.space(2),
+            m.time("time", default.time().strftime("%H:%M"), "set alarm (hh:mm)"),
+            m.execute_params("alarms/set", "set", {"method" : "alarm"}),
+        ], True))
     
-    # alarm
-    hours   = list(map(lambda h: str(h).zfill(2), range(0, 24)))
-    hour    = str(default.hour).zfill(2)
-    minutes = list(map(lambda h: str(h).zfill(2), range(0, 60, 5)))
-    minute  = str(int(default.minute / 10) * 10).zfill(2)
-    
-    forms.append(
-        m.form("alarmhm", "set alarm", [
-            m.select("hour", 
-                list(map(lambda h: m.choice(h), hours)),
-                m.choice(hour), "hour"), 
-            m.select("minute",  
-                list(map(lambda i: m.choice(i), minutes)), 
-                m.choice(minute), "minute"),
-            select_devices,
-            m.execute("alarms/alarmhm", "set")
-        ]))
-    
-    return [m.view("_body", "timer and alarm", forms)]
+    return [m.view("_body", "timers and alarms", forms)]
 
 
-def alarmhm(hour, minute, devices):
-    """ Alarm."""
-    return alarm(f"{hour}:{minute}", devices)
+def set(method:str, time:str, minutes:int, devices:list[str]):
+    if len(devices) == 0: return [m.error("Select at least one device.")]
+    if method == 'timer': _set_timer(int(minutes), devices)
+    else: _set_alarm(time, devices)
+    return scheduled()
 
 
-def alarm(time, devices:list[str]):
+def _set_alarm(time, devices:list[str]):
     """ Alarm."""
     current_time = datetime.now().time()
     target_time = datetime.strptime(time, "%H:%M").time()
@@ -75,27 +62,33 @@ def alarm(time, devices:list[str]):
     time_difference = target_datetime \
         - datetime.combine(today, current_time)
     minutes = time_difference.total_seconds() / 60
-    return timer(minutes, devices)
+    return _set_timer(minutes, devices, True)
 
 
-def timer(mins:int, devices:list[str]):
-    """ Timer."""
-    if len(devices) == 0: return [m.error("Select at least one device.")]
-    mins = int(mins)
+def _set_timer(minutes:int, devices:list[str], alarm:bool=False):
+    """ Set timer."""
     now = datetime.now()
-    target = now + timedelta(minutes=mins)
+    target = now + timedelta(minutes=minutes)
     names_str = ", ".join((sorted(devices)))
-    id = f"{target.strftime('%Y-%m-%d %H:%M')} on {names_str}"
+    min = '' if alarm else f" ({minutes} min.)"
+    desc = f"{target.strftime('%Y-%m-%d %H:%M')}{min} on {names_str}"
     def _blink(): lw.blink(devices)
-    sd.execute_delayed_background(target, _blink, id)
+    sd.execute_delayed_background(
+        target, _blink, 'timer' if not alarm else 'alarm', desc)
     return scheduled()
 
 
 def scheduled(stop:str=None):
     """ Schedules a timer."""
     if stop != None: sd.terminate(stop)
-    running = list(map(lambda r: m.choice(r), sd.running()))
-    scheduled = m.triggers("alarms/scheduled", "stop", running)\
-        if len(running) > 0 else m.label("nothing scheduled")
-    return [m.form("scheduled", "running alarms and timers", [
-        scheduled], True)]
+    all = sd.all()
+    timers_alarms = [t for t in all if t['type'] in ['timer', 'alarm']]
+    rest = [t for t in all if t not in timers_alarms]
+    def _desc(r): return f"{r['type']}: {r['desc']}"
+    tasks = list(map(lambda r: m.choice(r['id'], _desc(r)), timers_alarms))
+    triggers = m.triggers("alarms/scheduled", "stop", tasks) \
+        if len(tasks) > 0 else m.label("no timers and no alarms")
+    labels = labels = [m.label(_desc(t), 'small') for t in rest] \
+        if len(rest) > 0 else []
+    return [m.form("scheduled", "running", [
+        triggers, *labels, m.autoupdate("alarms/scheduled", 5000)], True)]

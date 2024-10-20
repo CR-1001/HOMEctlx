@@ -51,7 +51,7 @@ def directory(
 
     forms = []
 
-    form_dir = m.form(None, None, [], True, False)
+    form_dir = m.form(None, None, [], True, False, "small")
 
     # menu
     show_menu = m.execute_params("files/directory", 
@@ -235,6 +235,8 @@ def edit(file) -> list[m.form]:
     download = m.download(link)
 
     meta = fa.read_file_meta_data([session['dir'], file])
+    meta_info = m.label(
+        f"last change: {meta['changed']} / bytes: {meta['size']}", "small")
 
     if not meta["is_text"] and not meta["is_markdown"]:
 
@@ -244,6 +246,7 @@ def edit(file) -> list[m.form]:
         elif meta["is_pdf"]:      fields.append(m.media(link, "pdf"))
 
         fields.append(download)
+        fields.append(meta_info)
         forms.append(m.form("vf", "view content", fields, True))
 
     else:
@@ -254,7 +257,8 @@ def edit(file) -> list[m.form]:
             m.form("uf", "edit content", [
                 file_hidden,
                 m.text_big("content", content),
-                m.execute("files/update_file", "overwrite")
+                meta_info,
+                m.execute("files/update_file", "overwrite"),
             ], True))
         
         has_remove_and_import = not meta["is_markdown"] \

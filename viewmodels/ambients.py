@@ -52,7 +52,13 @@ def running():
     """ Current states."""
     running = ami.running()
     if len(running) > 0:
-        field = m.triggers("ambients/stop", "name", m.choice.makelist(running))
+        def _desc(a):
+            started = datetime.fromisoformat(a['start'])\
+                .strftime('%Y-%m-%d %H:%M')
+            return f"{a['desc']} (started: {started})" 
+        triggers = [m.choice(a['id'], _desc(a)) \
+            for a in running]
+        field = m.triggers("ambients/stop", "name", triggers)
     else:
         field = m.label("no running ambients")
     udpate_delay = 5000 if len(running) == 0 else 2000
@@ -135,7 +141,7 @@ def edit(name:str, tokens:str=None):
                 {'run': True, 'check': True}),
         ], table=False),
         m.form(None, None, [
-            m.execute("ambients/ctl", "cancel and go back"),
+            m.execute("ambients/ctl", "go back"),
             m.space(1)
         ], table=False),
         m.form(None, "built-in", _builtin()),
@@ -145,7 +151,7 @@ def edit(name:str, tokens:str=None):
         ])]
     if tokens != None:
         forms.insert(2, m.form(None, 'validation', [
-            m.execute_params("ambients/edit", "clear and cancel", 
+            m.execute_params("ambients/edit", "clear", 
                 {'name': name}),
             m.label("the ambiscript produced the following instructions:"),
             m.text_big_ro(None, tokens)]))
