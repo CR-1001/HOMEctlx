@@ -6,6 +6,7 @@ The request handler receives requests and passes parameters to the view-models. 
 """
 
 from collections.abc import Iterable
+import inspect
 from flask import Blueprint, jsonify, render_template, request, send_from_directory
 import services.meta as m
 import services.fileaccess as fa
@@ -40,7 +41,11 @@ class reqhandler:
         try:
             if func in ['', None, 'undefined']: func = 'ctl'
             method = getattr(reqhandler.modules[vm], func)
-            elements = method(**args)
+            sig = inspect.signature(method)
+            accepted_params = sig.parameters.keys()
+            filtered_args = {k: v for k, v in args.items() \
+                if k in accepted_params}
+            elements = method(**filtered_args)
             if not isinstance(elements, Iterable): elements = [elements]
             
             payload = {}
