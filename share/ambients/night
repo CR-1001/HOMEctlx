@@ -1,3 +1,4 @@
+wait 19:00
 
 {% for _ in range(10) %}
   {{ random_with_bias(['$arbeitszimmer']) }}
