@@ -31,7 +31,8 @@ def ctl() -> list[m.view]:
 def logs():
     logs = fa.read_file(["temp", "logs"])
     return m.form("lo", "logs", [
-                m.execute("telemetry/delete_logs", "clean"),
+                m.execute("telemetry/delete_logs", "clean",
+                    confirm="Do you want to delete all log entries?"),
                 m.text_big_ro("lo-l", logs),
                 m.autoupdate("telemetry/logs", 5000)
             ], False, False)

@@ -30,6 +30,8 @@ def ctl() -> list[m.view]:
             m.triggers("ambients/run", "name", m.choice.makelist(ambients))
         ], True, False))
 
+    forms += forms_running[1:]
+
     if len(ambients_and_macros) > 0:
         forms.append(m.form("a-edit", "edit", [
             m.triggers("ambients/edit", "name", m.choice.makelist(ambients_and_macros))
@@ -40,8 +42,6 @@ def ctl() -> list[m.view]:
             m.text("name", _name_suggestion()),
             m.execute("ambients/edit", "create"),
         ]))
-    
-    forms += forms_running[1:]
 
     return [
         m.view("_body", "ambients", forms), 
@@ -58,7 +58,8 @@ def running():
             return f"{a['desc']} (started: {started})" 
         triggers = [m.choice(a['id'], _desc(a)) \
             for a in running]
-        field = m.triggers("ambients/stop", "name", triggers)
+        field = m.triggers("ambients/stop", "name", triggers, \
+            confirm="Do you want to stop this ambient?")
     else:
         field = m.label("no running ambients")
     udpate_delay = 5000 if len(running) == 0 else 2000
@@ -79,7 +80,7 @@ def states():
 
     for grp in sorted_groups:
         fields = fields_on if grp.head.pwr != "off" else fields_off
-        fields.append(m.light("ambients/set_state", grp))
+        fields.append(m.light("ambients/set_state", grp, True))
 
     if len(fields_on) == 0: fields_on.append(m.label("no active devices"))
 
