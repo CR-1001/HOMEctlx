@@ -63,7 +63,7 @@ def create_app(app):
 def after_request(exception):
     """ Free resources after the request."""
     dba.close_cached()
-    if exception != None: log.error(e)
+    if exception != None: log.error(exception)
 
 
 @app.before_request

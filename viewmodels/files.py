@@ -17,10 +17,12 @@ from viewmodels import markdown
 def ctl(dir:str=None, 
         file:str=None, 
         content:bool=None, 
-        edit:bool=None) -> list[m.view]:
+        edit:bool=None,
+        show:bool=False) -> list[m.view]:
     """ Starting point."""
-    if file != None: return filex(file, dir, content, edit)
-    else:            return directory(dir, content, edit)
+    if show != False: return showx(0)
+    if file != None:  return filex(file, dir, content, edit)
+    else:             return directory(dir, content, edit)
 
 
 def set_defaults():
@@ -95,11 +97,16 @@ def directory(
     # list files
     forms += directory_files(session['st_idx'])
 
-    return [m.view("_body", f"share: {session['dir'].split('/')[-1]}", forms),
+    if session['edit']:
+        forms[0].fields.append(
+            m.label(f"directory: share{session['dir']}".strip('/')))
+        
+    return [m.view("_body", f"share", forms),
             m.header([_path_triggers(session['dir'])])]
 
 
 def directory_files(st_idx:int):
+    """ Directory files."""
     files, dirs  = fa.list_files([session['dir']])
     session['st_idx'] = max(int(st_idx), 0)
     page_sz = 10
@@ -112,6 +119,8 @@ def directory_files(st_idx:int):
         files_content = []
         if session['edit'] or session['content']:
             files_content.append(pager_top)
+            files_content.append(m.execute_params(
+                "files/ctl", "presentation mode", { "show": True }))
             files_content.append(m.label(f"{files_sz} files"))
         for f in files: 
             files_content += file_fields(f)
@@ -148,7 +157,8 @@ def directory_edit_fields(files:list):
         # delete file
         form_mvfile = m.form(None, "delete file", [
                 m.select("file", files_choices, None, "file:"),
-                m.execute("files/delete_file", "delete file")
+                m.execute("files/delete_file", "delete file",
+                    confirm="Do you want to delete this file?")
             ])
         forms.append(form_mvfile)
 
@@ -163,7 +173,8 @@ def directory_edit_fields(files:list):
         form_mvfile = m.form(None, "move file", [
                 m.select("file", files_choices, None, "old:"),
                 m.text("file_new", "", "new:"),
-                m.execute("files/move_file", "move file")
+                m.execute("files/move_file", "move file",
+                    confirm="Do you want to move this file?")
             ])
         forms.append(form_mvfile)
 
@@ -176,14 +187,16 @@ def directory_edit_fields(files:list):
 
     # delete directory
     form_rmdir = m.form(None, "delete directory", [
-        m.execute("files/delete_directory", "delete current directory")
+        m.execute("files/delete_directory", "delete current directory", 
+            confirm="Do you want to delete this directory?")
     ])
     forms.append(form_rmdir)
 
     # move directory
     form_mvdir = m.form(None, "move directory", [
             m.text("dir_new", session['dir'], "new:"),
-            m.execute("files/move_directory", "move or rename directory")
+            m.execute("files/move_directory", "move directory",
+                confirm="Do you want to move this directory?")
         ])
     forms.append(form_mvdir)
     
@@ -211,14 +224,7 @@ def file_fields(file:str):
     fields.append(m.file("files/edit",
         session['dir'], file, locked, link))
     if session['content']:
-        if not meta["is_text"]:
-            if   meta["is_image"]:    fields.append(m.media(link, "image"))
-            elif meta["is_video"]:    fields.append(m.media(link, "video"))
-            elif meta["is_pdf"]:      fields.append(m.media(link, "pdf"))
-            elif meta["is_markdown"]: fields.append(markdown.for_file(session['dir'], file))
-        else:
-            text = fa.read_file([session['dir'], file])
-            fields.append(m.text_big_ro('', text))
+        _file_content(link, meta, fields, file)
         fields.append(m.space(1))
     return fields
 
@@ -300,10 +306,44 @@ def edit(file) -> list[m.form]:
         forms.append(
             m.form("df", "delete file", [
                 file_hidden,
-                m.execute("files/delete_file", "delete")
+                m.execute("files/delete_file", "delete",
+                    confirm="Do you want to delete this file?")
             ]))
-            
-    return [m.view("_body", f"share: {file}", forms)]
+    
+    path = f"share{session['dir']}".strip('/') + '/' + file
+    forms[0].fields.append(m.label(f"file: {path}", 'small'))
+    return [m.view("_body", f"share", forms)]
+
+
+def _file_content(link:str, meta:dict, fields:list, file:str):
+    """ File content."""
+    if not meta["is_text"]:
+        if   meta["is_image"]:    fields.append(m.media(link, "image"))
+        elif meta["is_video"]:    fields.append(m.media(link, "video"))
+        elif meta["is_pdf"]:      fields.append(m.media(link, "pdf"))
+        elif meta["is_markdown"]: fields.append(markdown.for_file(session['dir'], file))
+    else:
+        text = fa.read_file([session['dir'], file])
+        fields.append(m.text_big_ro('', text))
+
+
+def showx(file_idx:str):
+    """ Show."""
+    file_idx = int(file_idx)
+    fields = []
+    files = fa.list_files([session['dir']])
+    if file_idx >= len(files[0]): file_idx = 0
+    elif file_idx < 0: file_idx = len(files[0]) -1
+    file = files[0][file_idx]
+    link = fa.sanitize([session['dir'], file])
+    meta = fa.read_file_meta_data([session['dir'], file])
+    _file_content(link, meta, fields, file)
+    if len(fields) == 0: fields.append(m.label(file))
+    else: fields[0].style = "fill"
+    forms = [m.form(None, "", fields, True, False)]
+    fields_header = [m.show("files/showx", "file_idx", 
+        file_idx, len(files[0]), file, "files/ctl", link)]
+    return [m.view("_body", None, forms), m.header(fields_header, style="flex")]
 
 
 def template(file:str, templates:list[str]):
@@ -319,7 +359,8 @@ def template(file:str, templates:list[str]):
                 m.execute("files/add_entries", "append")
             ], True)
     ]
-    return [m.view("_body", f"share: {file}", forms)]
+
+    return [m.view("_body", "share", forms)]
 
 
 def add_entries(file:str, lines:list=[]):

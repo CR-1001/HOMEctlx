@@ -33,6 +33,7 @@ class form(uielement):
     open:bool=False
     table:bool=True
     style:str=''
+    details:str=''
 
 
 @dataclass
@@ -40,6 +41,7 @@ class header(uielement):
     fields:list
     name:str=None
     key:str="_header"
+    style:str=''
 
 
 @dataclass
@@ -48,6 +50,7 @@ class execute(uielement):
     text:str="execute"
     important:bool=False
     key:str=None
+    confirm:str=None
 
 
 @dataclass
@@ -57,6 +60,7 @@ class execute_params(uielement):
     params:dict=None
     important:bool=False
     key:str=None
+    confirm:str=None
 
 
 @dataclass
@@ -81,6 +85,7 @@ class triggers(uielement):
     param:str
     values:list[choice]
     desc:str=None
+    confirm:str=None
 
 
 @dataclass
@@ -94,6 +99,17 @@ class pager(uielement):
     focus:bool=False
     params:dict=None
     #params:dict=field(default_factory=dict)
+
+
+@dataclass
+class show(uielement):
+    func:str
+    param:str
+    idx:int
+    size:int
+    item:str
+    back:str
+    link:str
 
 
 @dataclass
@@ -119,6 +135,7 @@ class hidden(input):
 class integer(input):
     param:str
     value:int
+    desc:str=""
 
 
 @dataclass
@@ -144,8 +161,8 @@ class text_big(input):
 
 
 @dataclass
-class text_ro(input):
-    text:int
+class text_ro(uielement):
+    text:str
     desc:str=None
 
 
@@ -204,6 +221,7 @@ class applink(uielement):
     text:str
     prefix:str='open'
     style:str=''
+    postfix:str=''
 
 
 @dataclass
@@ -268,6 +286,7 @@ class error(uielement):
 class light(uielement):
     func:str
     state:State
+    readonly:bool=False
 
 
 @dataclass
