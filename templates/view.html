@@ -5,7 +5,9 @@
 <div 
 {% if view.haskey() %}id="{{view.key}}"{% endif %} 
 {% if view.open %}open{% endif %}>
-    <div class="title-1 glow-a">{{view.name}}</div>
+{% if view.name not in [None, ''] %}
+<div class="title-1 glow-a">{{view.name.title()}}</div>
+{% endif %}
     <div>
         {% for form in view.forms %}
             {% include 'form.html' %}

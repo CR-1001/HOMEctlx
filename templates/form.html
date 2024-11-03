@@ -7,8 +7,12 @@
 {% if form.haskey() %}id="{{form.key}}"{% endif %} 
 {% if form.open %}open{% endif %}>
 
-    <summary class="title-2 glow-a">
-        <span>{{form.name}}</span>
+    <summary>
+        <span><span class="title-2 glow-a">&nbsp;{{form.name.title()}}</span>
+            {%- if form.details not in [None, ''] -%}
+            <span class="small inactive">&nbsp;&nbsp;{{form.details}}</span>
+            {%- endif -%}
+        </span>
     </summary>
 
     <div class="section-body">
@@ -46,7 +50,13 @@
 {% else %}
 <div id="{{form.key}}" class="section {{form.style}}">
     {% if form.name not in [None, ""] %}
-        <p class="title-2 glow-a">{{form.name}}</p>
+        <p>
+            <span><span class="title-2 glow-a">{{form.name.title()}}</span>
+                {%- if form.details not in [None, ''] -%}
+                <span class="small inactive">&nbsp;&nbsp;{{form.details}}&nbsp;</span>
+                {%- endif -%}
+            </span>
+        </p>
     {% endif %}
     <form>
         {% for field in form.fields recursive %}

@@ -2,13 +2,36 @@
     Distributed under terms of the GPL3 license. #}
 
 
-{% macro values(dev, vm, func, is_grp=False) %}
+{% macro values(dev, vm, func, is_grp=False, readonly=False) %}
+
+
 
 <div
     {% if not is_grp -%}
-    class="container-1 back-1 light" 
+    class="{% if not readonly %}container-1 back-3{% endif %}" 
     style="background-color: rgb({{ dev.red }},{{ dev.gre }},{{ dev.blu }});"
     {%- endif %}>
+    {% if readonly %}
+    <table class="indent-1">
+        <tr>
+            <td colspan="4">
+                <span><span class="inactive">{{dev.id}}&nbsp;</span>{{dev.name}}</span>
+            </td>
+        </tr>
+        <tr class="inactive">
+            <td>pwr&nbsp;</td>
+            <td>bri&nbsp;</td>
+            <td>hue&nbsp;</td>
+            <td>sat&nbsp;</td>
+        </tr>
+        <tr>
+            <td>{{dev.pwr}}</td>
+            <td>{{dev.bri}}</td>
+            <td>{{dev.hue}}</td>
+            <td>{{dev.sat}}</td>
+        </tr>
+    </table>
+    {% else %}
     <table class="info">
         <tr>
             <td colspan="2">
@@ -20,17 +43,20 @@
                         class="execute title-2 {% if dev.pwr == "off" %}inactive{% else %}glow-c{% endif %}"
                         data-vm="{{vm}}" 
                         data-func="{{func}}">
-                        &nbsp;{{dev.pwr}}
+                        &nbsp;[&nbsp;{{dev.pwr}}&nbsp;]
                     </span>
                     <input type="hidden" name="type" 
-                        value="{% if is_grp %}grp{% else %}dev{% endif %}">
+                    value="{% if is_grp %}grp{% else %}dev{% endif %}">
                     <input type="hidden" name="id" value="{{dev.id}}">
                     <input type="hidden" name="attr" value="pwr">
                     <input type="hidden" name="value" value="{% if dev.pwr == "off" %}on{% else %}off{% endif %}">
                 </div>
             </td>
         </tr>
-        <tr><td colspan="2"></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+        <tr>
+            <td colspan="2"></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        </tr>
         <tr>
             <td>BRI&nbsp;</td>
             <td>
@@ -92,18 +118,39 @@
         </tr>
         {% endif %}
     </table>
+    {% endif %}
 </div>
 
 {% endmacro %}
 
 
-<div class="container-1 back-1 light-grp-{{field.state.head.pwr}}">
+<div class="container-1 back-3 light-grp">
     <div class="indent-1">
         <br>
-        {{ values(field.state.head, field.vm, field.func, True) }}
+        {{ values(field.state.head, field.vm, field.func, True, field.readonly) }}
         <br>
     </div>
-    {% for d in field.state.members.items %}
-        {{ values(d, field.vm, field.func) }}
-    {% endfor %}
+    {% if field.readonly %}
+    <table>
+        {% for d in field.state.members.items %}
+            {% if loop.index0 % 2 == 0 %}
+                <tr>
+            {% endif %}
+            
+            <td>
+                {{ values(d, field.vm, field.func, False, field.readonly) }}
+            </td>
+            
+            {% if loop.index0 % 2 == 2 or loop.last %}
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+    <br>
+
+    {% else %}
+        {% for d in field.state.members.items %}
+            {{ values(d, field.vm, field.func, False, field.readonly) }}
+        {% endfor %}
+    {% endif %}
 </div>
