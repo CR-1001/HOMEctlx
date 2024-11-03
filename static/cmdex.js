@@ -10,13 +10,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initialize();
 
     // react to command
-    let debounceTimer;
     document.addEventListener("click", function(event) {
         if (event.target.matches(".execute, input.execute")) {
+            if (event.target.dataset.confirm) {
+                if (confirm(event.target.dataset.confirm) == false) {
+                    return;
+                }
+            }
             process(event.target);
         }
     });
-
+    
+    let debounceTimer;
     document.addEventListener("input", function(event) {
         if (event.target.matches(".execute, input.execute")) {
             clearTimeout(debounceTimer);

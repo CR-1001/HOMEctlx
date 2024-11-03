@@ -29,12 +29,13 @@ def ctl() -> list[m.view]:
     forms = [*scheduled()]
     
     # timer
-    mins = [*range(1, 20, 1), *range(20, 60, 5), *range(60, 241, 10)]
+    #mins = [*range(1, 20, 1), *range(20, 60, 5), *range(60, 241, 10)]
     forms.append(
         m.form("timer", "set", [
             select_devices,
             m.space(2),
-            m.select("minutes", list(map(lambda i: m.choice(i), mins)), None, "set timer (minutes)"),
+            m.integer("minutes", 10, "set timer (minutes)"),
+            #m.select("minutes", list(map(lambda i: m.choice(i), mins)), None, "set timer (minutes)"),
             m.execute_params("alarms/set", "set", {"method" : "timer"}),
             m.space(2),
             m.time("time", default.time().strftime("%H:%M"), "set alarm (hh:mm)"),
@@ -86,7 +87,8 @@ def scheduled(stop:str=None):
     rest = [t for t in all if t not in timers_alarms]
     def _desc(r): return f"{r['type']}: {r['desc']}"
     tasks = list(map(lambda r: m.choice(r['id'], _desc(r)), timers_alarms))
-    triggers = m.triggers("alarms/scheduled", "stop", tasks) \
+    triggers = m.triggers("alarms/scheduled", "stop", tasks, \
+            confirm="Do you want to delete this timer/alarm?") \
         if len(tasks) > 0 else m.label("no timers and no alarms")
     labels = labels = [m.label(_desc(t), 'small') for t in rest] \
         if len(rest) > 0 else []
