@@ -7,12 +7,15 @@
 
     {% if field.type() == "execute" %}
     <div
-        data-func="{{field.func}}"
+        data-func="{{field.func}}" 
         {% if field.autoupdate != 0 -%}
         data-autoupdate="{{field.autoupdate}}"
-        {%- endif -%}
+        {% endif -%}
+        {% if field.confirm not in [None, ''] -%}
+        data-confirm="{{field.confirm}}"
+        {% endif -%}
         class="action execute {% if field.important %}glow-a{% endif %}">
-        [{{field.text}}]
+        [&nbsp;{{field.text}}&nbsp;]
     </div>
 
     {% elif field.type() == "execute_params" %}
@@ -25,9 +28,12 @@
                 value="{{field.params[p]}}">
             {% endfor %}
         {% endif %}
-        <div data-func="{{field.func}}"
+        <div data-func="{{field.func}}" 
+            {% if field.confirm not in [None, ''] -%}
+            data-confirm="{{field.confirm}}"
+            {% endif -%}
             class="action execute {% if field.important %}glow-a{% endif %}">
-                [{{field.text}}]
+                [&nbsp;{{field.text}}&nbsp;]
         </div>
     </fieldset>
 
@@ -61,7 +67,7 @@
                     data-func="{{field.func}}"
                     data-container="{{field.container}}"
                     class="action execute {% if field.focus %}bring_into_view{% endif %}">
-                    [prev]
+                    [&nbsp;prev&nbsp;]
                 </span>
             </span>
             {% endif %}
@@ -75,7 +81,7 @@
                     data-func="{{field.func}}"
                     data-container="{{field.container}}"
                     class="action execute {% if field.focus %}bring_into_view{% endif %}">
-                        [next]
+                        [&nbsp;next&nbsp;]
                 </span>
             </span>
             {% endif %}
@@ -85,12 +91,12 @@
     {% elif field.type() == "placeholder" %}
     <div id="{{field.key}}"></div>
 
-    {% elif field.type() == "error" %}
-        {% if field.text != None %}
+    {% elif field.type() == "error" -%}
+        {%- if field.text not in [None, ''] -%}
         <div class="error glow-e">
-            {{field.text}}
+            {{-field.text-}}
         </div>
-        {% endif %}
+        {%- endif %}
     
     {% elif field.type() == "select" %}
     <select
@@ -116,11 +122,14 @@
             data-func="{{field.func}}"
             data-param="{{field.param}}"
             data-value="{{v.value}}"
+            {% if field.confirm not in [None, ''] -%}
+            data-confirm="{{field.confirm}}"
+            {% endif -%}
             class="action execute {% if v.important %}glow-a{% endif %}">
             {% if v.text != None %}
-                [{{v.text}}]
+                [&nbsp;{{v.text}}&nbsp;]
             {% else %}
-                [{{v.value}}]
+                [&nbsp;{{v.value}}&nbsp;]
             {% endif %}
         </div>
         {% endfor %}
@@ -128,7 +137,7 @@
 
     {% elif field.type() == "path" %}
     <div>
-        <span>[</span>
+        <span>[&nbsp;</span>
         {% for v in field.values %}
         <span 
             data-func="{{field.func}}"
@@ -138,7 +147,7 @@
             {% if v.text != None %}{{v.text}}{% else %}{{v.value}}{% endif %}
         </span>
         {% endfor %}
-        <span>]</span>
+        <span>&nbsp;]</span>
     </div>
 
     {% elif field.type() == "select_many" %}
@@ -164,15 +173,16 @@
                 </label>
         </div>
         {% endfor %}
-
-        {% if field.values.__len__() > 3 %}
-        <div class="action invert-selection">[invert]</div>
-        {% endif %}
+{#
+    {% if field.values.__len__() > 3 %}
+    <div class="action invert-selection">[&nbsp;invert&nbsp;]</div>
+    {% endif %}
+#}
 
     </div>
 
     {% elif field.type() == "title" %}
-    <span class="title-2 glow-a">{{field.text}}</span>
+    <span class="title-2 glow-a">{{field.text.title()}}</span>
 
     {% elif field.type() == "label" %}
     <div class="info">
@@ -201,11 +211,11 @@
     {% elif field.type() == "text_big_ro" %}
         {% if field.text != None %}
         <pre 
-            class="recess back-1 selectable width-1"
+            class="recess back-3 selectable width-1"
             readonly>{{field.text}}</pre>
         {% endif %}
 
-    {% elif field.type() == "int" %}
+    {% elif field.type() == "integer" %}
     <input 
         class="recess back-3"
         type="number"
@@ -231,7 +241,7 @@
     <a 
         target="_blank"
         href="/files/share{{field.file}}">
-        [{{field.text}}]
+        [&nbsp;{{field.text}}&nbsp;]
     </a>
 
     {% elif field.type() == "upload" %}
@@ -266,46 +276,88 @@
         class="action" 
         href="{{field.link}}" 
         target="_blank"
-        >[{{field.text}}]</a>
+        >[&nbsp;{{field.text}}&nbsp;]</a>
 
     {% elif field.type() == "dir" %}
     <div>
         <span class="fieldset">
             <input type="hidden" name="dir" value="{{field.path()}}">
+            <span class="small inactive">[&nbsp;</span>
             <span
                 data-func="{{field.func}}"
                 class="action execute title-2">
-                    📂&nbsp;{{field.dir}}&nbsp;
-                    {%- if field.readonly %}🔒&nbsp;{% endif -%}
-                    {%- if field.files != 0 -%}
-                        <span class="inactive small">
-                            {{-field.files}}&nbsp;entries</span>
-                    {%- endif %}
+            📂&nbsp;{{field.dir.ljust(20)}}
+            {%- if field.readonly %}&nbsp;🔒{% endif -%}
+            {%- if field.files != 0 -%}
+            <span class="inactive small">
+                &nbsp;{{- field.files }}&nbsp;entries</span>
+                {%- endif %}
             </span>
+            <span class="small inactive">&nbsp;]</span>
         </span>
     </div>
 
     {% elif field.type() == "file" %}
     <div>
         <a target="_blank" href="/files/share{{field.link}}">
-            <span class="title-2">
-                📄&nbsp;{{field.file}}&nbsp;{%if field.readonly %}🔒{% endif %}
-            </span>
-            <!--<br>
-            <span class="fieldset">
-                <input type="hidden" name="dir"  value="{{field.dir}}">
-                <input type="hidden" name="file" value="{{field.file}}">
-                <span data-func="{{field.func}}"
-                class="action execute {% if field.important %}glow-a{% endif %}"
-                >[edit]</span>
-            </span>-->
+            <span class="small inactive">[&nbsp;</span>
+            <span class="title-2">📄&nbsp;{{field.file}}{% if field.readonly %}&nbsp;🔒{% endif %}</span>
+            <span class="small inactive">&nbsp;]</span>
         </a>
     </div>
 
     {% elif field.type() == "applink" %}
     <span class="info">{{field.prefix}}</span>
-    <a  class="action glow-a" href="{{field.link}}">
+    <a class="action glow-a" href="{{field.link}}">
         &nbsp;[&nbsp;{{field.text}}&nbsp;]&nbsp;</a>
+    {% if field.postfix not in [None, ''] -%}
+    <span class="info">{{field.postfix}}</span>
+    {% endif %}
+
+    {% elif field.type() == "show" %}
+    <span class="action execute small" data-func="{{field.back}}">
+        &nbsp;[&nbsp;back&nbsp;]&nbsp;</span>
+    <span class="fieldset">
+        <input type="hidden" name="{{field.param}}" 
+            value="{{field.idx-1}}">
+        <span data-func="{{field.func}}"
+            class="action execute">
+            &nbsp;[&nbsp;&lt;&nbsp;]
+        </span>
+    </span>
+    <span class="fieldset">
+        <input type="hidden" name="{{field.param}}" 
+            value="{{field.idx+1}}">
+        <span data-func="{{field.func}}"
+            class="action execute">
+            &nbsp;[&nbsp;&gt;&nbsp;]&nbsp;
+        </span>
+    </span>
+    {% if field.size > 20 %}
+    <span class="fieldset small">
+        <input type="hidden" name="{{field.param}}" 
+            value="{{(field.size+field.idx-10) % field.size}}">
+        <span data-func="{{field.func}}"
+            class="action execute">
+            &nbsp;[&nbsp;&lt;&nbsp;10&nbsp;]
+        </span>
+    </span>
+    <span class="fieldset small">
+        <input type="hidden" name="{{field.param}}" 
+            value="{{(field.idx+10) % field.size}}">
+        <span data-func="{{field.func}}"
+            class="action execute">
+            &nbsp;[&nbsp;10&nbsp;&gt;&nbsp;]
+        </span>
+    </span>
+    {% endif %}
+    <a class="small" target="_blank"
+        href="/files/share{{field.link}}">
+        &nbsp;[&nbsp;link&nbsp;]
+    </a>
+    <br>
+    <span class="info small">&nbsp;&nbsp;{{field.idx+1}}&nbsp;/&nbsp;{{field.size}}</span>
+    <span class="small">&nbsp;&nbsp;{{field.item}}</span>
 
     {% elif field.type() == "markdown" %}
     {% include 'markdown.html' %}
