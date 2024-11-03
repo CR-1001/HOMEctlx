@@ -4,6 +4,14 @@
     "lightctl_exec_test": "./test/lightctl-test.sh",
     "share_dir": "share",
     "routines": {
+        "weather": {
+            "command": "curl wttr.in/Mainz?TdAF",
+            "desc": "Fetch weather report from wttr.in.",
+            "exec": {
+                "auto": false,
+                "manual": true
+            }
+        },
         "calendar": {
             "command": "date +'%B %d, %Y' && echo && cal",
             "exec": {
@@ -18,13 +26,6 @@
                 "init": true,
                 "auto": false,
                 "manual": true
-            }
-        },
-        "weather": {
-            "command": "curl wttr.in/Mainz?TdAF",
-            "exec": {
-                "auto": true,
-                "manual": false
             }
         }
     }
