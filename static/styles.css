@@ -207,8 +207,12 @@ textarea {
     max-height: 100%;
 }
 
-.flex {
+.flex, .flex form {
     display: flex;
+}
+
+.flex form div {
+    margin-right: 1em;
 }
 
 .selectable {

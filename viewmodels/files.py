@@ -53,7 +53,7 @@ def directory(
 
     forms = []
 
-    form_dir = m.form(None, None, [], True, False, "small")
+    form_dir = m.form(None, None, [], True, False, "small flex")
 
     # menu
     show_menu = m.execute_params("files/directory", 
@@ -69,6 +69,9 @@ def directory(
         { "edit": session['edit'] })
         show_media.params['content'] = not session['content']
         form_dir.fields.append(show_media)
+        if session['content']:
+            form_dir.fields.append(m.execute_params(
+                "files/ctl", "presentation", { "show": True }))
         
     # add edit menu
     if len(form_dir.fields) > 0: 
@@ -97,9 +100,9 @@ def directory(
     # list files
     forms += directory_files(session['st_idx'])
 
-    if session['edit']:
-        forms[0].fields.append(
-            m.label(f"directory: share{session['dir']}".strip('/')))
+    #if session['edit']:
+    #    forms[0].fields.append(
+    #        m.label(f"directory: share{session['dir']}".strip('/')))
         
     return [m.view("_body", f"share", forms),
             m.header([_path_triggers(session['dir'])])]
@@ -119,8 +122,6 @@ def directory_files(st_idx:int):
         files_content = []
         if session['edit'] or session['content']:
             files_content.append(pager_top)
-            files_content.append(m.execute_params(
-                "files/ctl", "presentation mode", { "show": True }))
             files_content.append(m.label(f"{files_sz} files"))
         for f in files: 
             files_content += file_fields(f)
@@ -142,7 +143,7 @@ def directory_edit_fields(files:list):
             m.upload("upload", "select local files:"),
             m.text("rename", "", "rename (optional):"),
             m.execute("files/upload_file", "upload files")
-        ])
+        ], style='small')
     forms.append(form_ulfile)
 
     # create file
@@ -150,7 +151,7 @@ def directory_edit_fields(files:list):
             m.text("file", "new", "name:"),
             m.text_big("content", "", "content:"),
             m.execute("files/create_file", "create text file")
-        ])
+        ], style='small')
     forms.append(form_mkfile)
 
     if len(files_choices) > 0:
@@ -159,14 +160,14 @@ def directory_edit_fields(files:list):
                 m.select("file", files_choices, None, "file:"),
                 m.execute("files/delete_file", "delete file",
                     confirm="Do you want to delete this file?")
-            ])
+            ], style='small')
         forms.append(form_mvfile)
 
         # edit file
         form_mkfile = m.form(None, "edit file", [
             m.select("file", files_choices, None, "file:"),
             m.execute("files/edit", "edit file")
-        ])
+        ], style='small')
         forms.append(form_mkfile)
 
         # move file
@@ -175,21 +176,21 @@ def directory_edit_fields(files:list):
                 m.text("file_new", "", "new:"),
                 m.execute("files/move_file", "move file",
                     confirm="Do you want to move this file?")
-            ])
+            ], style='small')
         forms.append(form_mvfile)
 
     # create directory
     form_mkdir = m.form(None, "create directory", [
             m.text("dir_new", "new", "name:"),
             m.execute("files/create_directory", "create sub directory")
-        ])
+        ], style='small')
     forms.append(form_mkdir)
 
     # delete directory
     form_rmdir = m.form(None, "delete directory", [
         m.execute("files/delete_directory", "delete current directory", 
             confirm="Do you want to delete this directory?")
-    ])
+    ], style='small')
     forms.append(form_rmdir)
 
     # move directory
@@ -197,10 +198,10 @@ def directory_edit_fields(files:list):
             m.text("dir_new", session['dir'], "new:"),
             m.execute("files/move_directory", "move directory",
                 confirm="Do you want to move this directory?")
-        ])
+        ], style='small')
     forms.append(form_mvdir)
     
-    forms.append(m.form("", "", fields=[m.space(1)], table=False))
+    forms.append(m.form("", "", fields=[m.space(1)], table=False, style='small'))
 
     return forms
 
