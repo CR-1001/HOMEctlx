@@ -1,4 +1,4 @@
 # Welcome
-Visit the [project page](https://github.com/CR-1001/HOMEctlx).
+Visit the [project page](https://github.com/chrauch/HOMEctlx).
 
 You may customize this.
